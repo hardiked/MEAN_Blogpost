@@ -10,8 +10,8 @@ module.exports=function(router){
 
 	var options={
 		auth:{
-			api_user:'hardik97122',
-			api_key:'h97122@MODI'
+			api_user:'',
+			api_key:''
 		}
 	}
 
