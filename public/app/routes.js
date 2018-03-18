@@ -28,6 +28,8 @@ var app=angular.module('appRoutes',['ngRoute'])
 	.when('/profile',{
 		templateUrl:'app/views/pages/users/profile.html',
 		autheticated:true,
+		controller:'imageCtrl',
+		controllerAs:'image',
 		baseurl:''
 	})
 

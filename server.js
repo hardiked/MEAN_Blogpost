@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(__dirname+'/public'));
 app.use('/api',appRoutes);
-mongoose.connect('mongodb://localhost:27017/mean_application',function(err){
+var con=mongoose.connect('mongodb://localhost:27017/mean_application',function(err){
 // mongoose.connect('mongodb://<username>:<password>@ds155418.mlab.com:55418/mean_application',function(err){
 	if(err){
 		console.log(err);

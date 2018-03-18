@@ -4,9 +4,63 @@ var jwt=require('jsonwebtoken');
 var secret='swaminarayan';
 var nodemailer=require('nodemailer');
 var sgtransport=require('nodemailer-sendgrid-transport');
+var multer=require('multer');
+
+
+
+var upload=multer().single('avatar');
+
 
 module.exports=function(router){
+	var fileName;
+	var storage=multer.diskStorage({
+		destination:function(req,file,cb){
+			cb(null,'./uploads');
+		},
+		filename:function(req,file,cb){
+			if(!file.originalname.match(/\.(jpeg|jpg|png)$/)){
+				var err=new Error();
+				err.code='filetype';
+				return cb(err);
+			}
+			else{
+				fileName=Date.now()+'_'+file.originalname;
+				cb(null,fileName);
+			}
+		}
+	});
 
+	var upload=multer({
+		storage:storage,
+		limits: {fileSize:10000000}
+
+	}).single('myfile');
+
+	router.post('/upload',function(req,res){
+		upload(req,res,function(err){
+			if(err){
+				if(err.code==='LIMIT_FILE_SIZE'){
+					res.json({success:false,message:'File size is too large max. size is 10MB'});
+				}
+				else if(err.code==='filetype'){
+					res.json({success:false,message:'File type is invalid'});
+				}
+				else{
+					console.log(err);
+					res.json({success:false,message:'file not uploaded'});
+				}
+			}
+			else{
+				if(!req.file){
+					res.json({success:false,message:'No file was selected'});
+				}
+				else{
+					console.log(fileName);
+					res.json({success:true,message:'File uploaded'});
+				}
+			}
+		});
+	});
 
 	var options={
 		auth:{

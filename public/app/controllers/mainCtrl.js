@@ -1,6 +1,25 @@
 angular.module('mainController',['authServices','uploadFileService'])
 
-.controller('mainCtrl',function($window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout,uploadFile){
+.controller('imageCtrl',function($scope,uploadFile){
+	$scope.file={};
+	console.log("ji");
+	$scope.Submit=function(){
+		uploadFile.upload($scope.file).then(function(data){
+			if(data.data.success){
+				$scope.alert='alert alert-success';
+				$scope.message=data.data.message;
+				$scope.file={};
+			}
+			else{
+				$scope.alert='alert alert-danger';
+				$scope.message=data.data.message;
+				$scope.file={};
+			}
+		});
+	};
+})
+
+.controller('mainCtrl',function($window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
 
 	var app=this;
 	$scope.textOnLogInButton="Login";
