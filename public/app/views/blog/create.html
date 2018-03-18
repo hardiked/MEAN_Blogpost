@@ -1,0 +1,20 @@
+<div class="page-header">
+	<h1>Create Story</h1>
+</div>
+
+<h4>
+	{{ main.username }}
+</h4>
+
+
+<form ng-submit="main.createBlog(blogData);">
+	<div class="form-control">
+	  <input type="text" name="title" class="form-control" placeholder="Title" style="font-size: 250%;font-family: 'sans serif'">
+	</div>
+	<div class="form-control">
+	  <label for="blog">Content</label>
+	  <textarea name="blog" id="textarea1" class="materialize-textarea" rows="5"></textarea>
+	</div>
+	<button class="btn btn-primary">Publish</button>
+
+</form>

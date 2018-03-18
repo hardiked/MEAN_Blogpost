@@ -1,0 +1,23 @@
+{
+  "name": "mean_application",
+  "version": "1.0.0",
+  "description": "mean application",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Hardik Modi",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
+    "mongoose": "^5.0.0-rc2",
+    "mongoose-validator": "^1.3.2",
+    "morgan": "^1.9.0",
+    "nodemailer": "^4.4.1",
+    "nodemailer-sendgrid-transport": "^0.2.0"
+  }
+}

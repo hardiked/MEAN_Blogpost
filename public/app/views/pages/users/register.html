@@ -1,0 +1,80 @@
+<div class="card">
+<div class="page-header">
+	<h1 style="text-align: center;">Signup</h1>
+</div>
+
+<div class="row show-hide-message" ng-show="register.successMsg">
+	<div class="alert alert-success" style="color: green;margin-left: 25%;">
+		{{register.successMsg}}
+	</div>
+</div>
+
+<div class="row show-hide-message" ng-show="register.errorMsg">
+	<div class="alert alert-danger" style="color: red;margin-left: 25%;">
+		{{register.errorMsg}}
+	</div>
+</div>
+
+<div class="row show-hide-message" ng-show="register.warningMsg">
+	<div class="alert alert-info" style="color: green;margin-left: 25%;">
+		{{register.warningMsg}}
+	</div>
+</div>
+
+<form ng-submit="register.regUser(regData,form.$valid);" name="form" novalidate>
+
+	<div ng-class="{'has-success':(form.email.$valid && !form.email.$pristine && !register.emailInvalid) ,'has-error':(!form.email.$valid && !form.email.$pristine) || (!form.email.$valid && form.$submitted) || register.emailInvalid}" class= "input-field" style="width: 80%;padding-left: 25%;">
+		<label style="width: 80%;padding-left: 31%;">Email:</label>
+		<input type="email" name="email" class="form-control" ng-model="register.regData.email" ng-pattern="/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/" ng-blur="register.checkEmail(regData)" required>
+		<span ng-show="register.checkingEmail" class="glyphicon glyphicon-repeat spinner"></span><div class="{{register.emailName}}" ng-show="register.emailMsg && form.email.$valid">					<img src="../../../../assets/images/{{register.emailMsg}}.png" class="circle 			responsive-img" style="width: 3%;height: 3%;">
+			{{register.emailMsg}}
+		</div>
+		<p class="help-block" ng-show="(!form.email.$pristine && form.email.$error.required) || (form.$submitted && form.email.$error.required)" style="color: red;" >*This field is required</p>
+		<ul ng-show="(!form.email.$pristine && form.email.$error.pattern) || (!form.email.$pristine && form.email.$error.minlength) || (!form.email.$pristine && form.email.$error.maxlength)" class="collection">
+			<li class="collection-item">Must contain '@'</li>
+			<li class="collection-item">Must not contain an special character</li>
+			<li class="collection-item">Must be atleast 3 character</li>
+		</ul>
+		
+	</div>
+	<br>
+	<div ng-class="{'has-success':(form.username.$valid && !form.username.$pristine && !register.usernameInvalid) ,'has-error':(!form.username.$valid && !form.username.$pristine) || (!form.username.$valid && form.$submitted) || register.usernameInvalid}" class= "input-field" style="width: 80%;padding-left: 25%;">
+		<label for="username" style="width: 80%;padding-left: 31%;">Username:</label>
+		<input type="text" name="username" class="form-control" ng-model="register.regData.username" ng-minlength="3" ng-maxlength="25" ng-blur="register.checkUsername(regData)" required>
+		<span ng-show="register.checkingUsername" class="glyphicon glyphicon-repeat spinner"></span>
+		<div class="{{register.className}}" ng-show="register.usernameMsg && form.username.$valid">
+		<img src="../../../../assets/images/{{register.usernameMsg}}.png" class="circle responsive-img" style="width: 3%;height: 3%;">
+		{{register.usernameMsg}}
+		</div>
+		<p class="help-block" ng-show="(!form.username.$pristine && form.username.$error.required) || (form.$submitted && form.username.$error.required)" style="color: red;">*This field is required</p>
+		<ul class="help-block" ng-show="(!form.username.$pristine && form.username.$error.minlength) || (!form.username.$pristine && form.username.$error.maxlength)" class="collection">
+			<li class="collection-item">Must have atleast 3 characters and atmax 25</li>
+		</ul>
+	</div>
+    <br>
+	<div ng-class="{'has-success':(form.firstPassword.$valid && !form.firstPassword.$pristine) ,'has-error':(!form.firstPassword.$valid && !form.firstPassword.$pristine) || (!form.firstPassword.$valid && form.$submitted)}" class= "input-field" style="width: 80%;padding-left: 25%;">
+		<label for="password" style="width: 80%;padding-left: 31%;">Password:</label>
+		<input type="password" name="firstPassword" class="form-control" ng-model="firstPassword" ng-minlength="8" ng-maxlength="35" ng-pattern="/^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?[\d])(?=.*?[\W]).{8,35}$/" required>
+		<p class="help-block" ng-show="(!form.firstPassword.$pristine && form.firstPassword.$error.required) || (form.$submitted && form.firstPassword.$error.required)" style="color: red;">*This field is required</p>
+		<ul class="collection" ng-show="(!form.firstPassword.$pristine && form.firstPassword.$error.pattern)">
+			<li class="collection-item">Must have atleast one lowercase</li>
+			<li class="collection-item">Must have atleast one uppercase</li>
+			<li class="collection-item">Must have atleast one special character</li>
+			<li class="collection-item">Must have atleast 8 characters and atmax 35 characters</li>
+		</ul>
+	</div>
+	<br>
+
+
+	<div ng-class="{'has-success':confirmed && !form.confirmpassword.$error.required, 'has-error':(!confirmed && !form.confirmpassword.$error.required) || (form.confirmpassword.$error.required && !form.confirmpassword.$pristine) || (form.$submitted && form.confirmpassword.$error.required)}" class= "input-field" style="width: 80%;padding-left: 25%;">
+		<label for="password" style="width: 80%;padding-left: 31%;">Confirm Password:</label>
+		<input type="password" name="confirmpassword" class="form-control" match="{{[firstPassword]}}" ng-change="register.regData.password=confirm" ng-model="confirm" required>
+		<p class="help-block" ng-show="(!form.confirmpassword.$pristine && form.confirmpassword.$error.required) || (form.$submitted && form.confirmpassword.$error.required)" style="color: red;">*This field is required</p>
+		<div class="help-block" ng-show="(!confirmed && !form.confirmpassword.$error.required) || (form.confirmpassword.$error.required && !form.confirmpassword.$pristine)" style="color: red;">Passwords do not match</div>
+	</div>
+	<br>
+
+	<button class="waves-effect waves-light btn" ng-bind="textOnSignUpButton" style="margin-left: 25%;margin-bottom: 5%;"></button>
+	<a href="/login" style="margin-bottom: -15%;">Alreaddy have an account? Login</a>
+</form>
+</div>
