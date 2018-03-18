@@ -1,6 +1,6 @@
-angular.module('mainController',['authServices'])
+angular.module('mainController',['authServices','uploadFileService'])
 
-.controller('mainCtrl',function($window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
+.controller('mainCtrl',function($window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout,uploadFile){
 
 	var app=this;
 	$scope.textOnLogInButton="Login";

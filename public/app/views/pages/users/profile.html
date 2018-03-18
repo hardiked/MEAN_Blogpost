@@ -14,4 +14,22 @@
 		<td>{{ main.useremail }}</td>
 	</tr>
 </table>
+<form action="#">
+    <div class="file-field input-field">
+      <div class="btn">
+        <span>File</span>
+        <input type="file" file-model="file.upload" name="myfile">
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text">
+      </div>
+    </div>
+    <button class="btn">Upload</button>
+</form>
+<br>
+<img ng-src="{{thumbnail.dataUrl || 'http://cdn1-www.craveonline.com/assets/uploads/2014/08/Facebook-Profile-Pic.png'}}">
+<div ng-show="message">
+	<div ng-class="alert">{{message}}</div>
+</div>
+
 </div>
