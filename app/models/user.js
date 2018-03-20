@@ -28,6 +28,7 @@ var UserSchema=new Schema({
 	username:{type:String,lowercase:true,required:true,unique:true,validate:usernameValidator},
 	password:{type:String,required:true,validate:passwordValidator,select:false},
 	email:{type:String,required:true,lowercase:true,unique:true},
+	profile:{type:String,required:false},
 	active:{type:Boolean,required:true,default:false},
 	temporarytoken:{type:String,required:true}
 });

@@ -1,25 +1,35 @@
 angular.module('mainController',['authServices','uploadFileService'])
 
-.controller('imageCtrl',function($scope,uploadFile){
+.controller('imageCtrl',function($rootScope,$scope,uploadFile,$http,$timeout){
 	$scope.file={};
-	console.log("ji");
+	$scope.uploading=false;
+	console.log($scope.uploading);
 	$scope.Submit=function(){
+		$scope.uploading=true;
+		console.log($scope.uploading);
 		uploadFile.upload($scope.file).then(function(data){
+			// console.log(data);
 			if(data.data.success){
 				$scope.alert='alert alert-success';
 				$scope.message=data.data.message;
+				$rootScope.profile=data.data.filename;
+				$http.put('/api/updateprofile',{"username":$rootScope.username,"profile":$rootScope.profile}).then(function(data){
+					$rootScope.profile=data.data.profile;
+					$scope.uploading=false;
+				});
 				$scope.file={};
 			}
 			else{
 				$scope.alert='alert alert-danger';
 				$scope.message=data.data.message;
 				$scope.file={};
+				$scope.uploading=false;
 			}
 		});
 	};
 })
 
-.controller('mainCtrl',function($window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
+.controller('mainCtrl',function($http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
 
 	var app=this;
 	$scope.textOnLogInButton="Login";
@@ -60,22 +70,28 @@ angular.module('mainController',['authServices','uploadFileService'])
 		if(Auth.isLoggedIn()){
 			app.isLoggedIn=true;
 			Auth.getUser().then(function(data){
-				app.username=data.data.username;
+				$rootScope.username=data.data.username;
+				var user=data.data.username;
+				console.log(user);
+				$http.post('/api/getprofile',{"username":user}).then(function(data){
+					$rootScope.profile=data.data.profile;
+					// console.log($rootScope.profile);
+				});
 				app.useremail=data.data.email;
 				app.loadme=true;
 			});
 		}
 		else{
-			app.username='';
+			$rootScope.username='';
 			app.isLoggedIn=false;
 			app.loadme=true;
 		}
+		
 	});
 
 	
 	this.doLogin=function(loginData){
 		console.log("gr");
-		console.log(app.loginData);
 		$scope.textOnLogInButton="Verifying...";
 		app.errorMsg=false;
 		app.successMsg=false;
@@ -84,6 +100,8 @@ angular.module('mainController',['authServices','uploadFileService'])
 		app.disabled=false;
 		Auth.login(app.loginData).then(function(data){
 			if(data.data.success==true){
+				$rootScope.profile=data.data.profile;
+				console.log($rootScope.profile)
 				$scope.textOnLogInButton="Redirecting...";
 				app.successMsg=data.data.message;
 				$timeout(function(){

@@ -58,11 +58,41 @@
     <script>
 $(document).ready(function(){
      $(".button-collapse").sideNav();
+      $(".pro").one("load", function() {
+        // do stuff
+          $('.modal').modal();
+        $(".mod").click(function(){
+           console.log("fd");
+           $('#modal1').modal('open');
+        });
+      }).each(function() {
+        if(this.complete) $(this).load();
+      });
+
+      $( ".pro" )
+       .on("mouseenter", function() {
+        $(".mod").show();
+      })
+      .on("mouseleave", function() {
+        $(".mod").hide();
+      });
+      $( ".mod" )
+       .on("mouseenter", function() {
+        $(".mod").show();
+      })
+      .on("mouseleave", function() {
+        $(".mod").hide();
+      });
 });
 </script>
+<style type="text/css">
+  .mod:hover{
+     text-decoration: underline;
+  }
+</style>
   </head>
 
-  <body ng-app="userApp" ng-controller="mainCtrl as main" ng-show="main.loadme" ng-cloak style="background-color: #efefee;">
+  <body ng-app="userApp" ng-controller="mainCtrl as main" ng-show="main.loadme" ng-cloak style="background-color: #efefee; font-family: Verdana;">
 
     <!-- Fixed navbar -->
     <!-- <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -88,17 +118,17 @@ $(document).ready(function(){
         </div>
       </div>
     </nav> -->
-    <nav>
+    <nav style="background-color: #00b98d;height: 85px;">
     <div class="nav-wrapper">
-      <a href="#" class="brand-logo">Blog</a>
+      <a href="#" class="brand-logo" style="font-size: 300%;font-weight: bold;margin-left: 2%;margin-top: 10px;">Sugarlabs</a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li class="active"><a href="/">Home</a></li>
+      <ul class="right hide-on-med-and-down" style="margin-top: 10px;">
+            <li><a href="/">Home</a></li>
             <li ng-show="main.isLoggedIn"><a href="/create">Create</a></li>
             <li ng-show="!main.isLoggedIn"><a href="/register">Register</a></li>
             <li ng-show="!main.isLoggedIn"><a href="/login">Login</a></li>
             <li ng-show="main.isLoggedIn"><a href="#" ng-click="main.logout()">Logout</a></li>
-            <li ng-show="main.isLoggedIn"><a href="/profile">Hello {{ main.username }}</a></li>
+            <li ng-show="main.isLoggedIn"><a href="/profile"><img style="height: 40px;width: 40px;margin-top: 10px;" class="circle" src="/api/profiles/{{profile}}"></a></li>
       </ul>
       <ul class="side-nav" id="mobile-demo">
         <li class="active"><a href="/">Home</a></li>
@@ -106,22 +136,15 @@ $(document).ready(function(){
             <li ng-show="!main.isLoggedIn"><a href="/register">Register</a></li>
             <li ng-show="!main.isLoggedIn"><a href="/login">Login</a></li>
             <li ng-show="main.isLoggedIn"><a href="#" ng-click="main.logout()">Logout</a></li>
-            <li ng-show="main.isLoggedIn"><a href="/profile">Hello {{ main.username }}</a></li>
+            <li ng-show="main.isLoggedIn"><a href="/profile">Hello {{ username }}</a></li>
       </ul>
     </div>
   </nav>
 
-    <div class="container theme-showcase" role="main">
 
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-    <!--   <div class="jumbotron">
-        <h1>Theme example</h1>
-        <p>This is a template showcasing the optional theme stylesheet included in Bootstrap. Use it as a starting point to create something more unique by building on or modifying it.</p>
-      </div> -->
+    <div ng-view></div>
 
-    <div ng-view style="margin-top: 5%;"></div>
 
-    </div> <!-- /container -->
 
 
     <!-- Compiled and minified JavaScript -->

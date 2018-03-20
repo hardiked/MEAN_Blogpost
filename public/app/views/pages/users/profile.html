@@ -1,35 +1,41 @@
-<div class="page-header">
-	<h1>{{main.username}}'s Profile</h1>
-</div>
-
-<div class="panel-info">
-	<div class="panel-heading" style="text-align: center;"><strong>User Profile</strong></div>	
-<table class="table">
-	<tr>
-		<td><strong>Usrename</strong></td>
-		<td>{{ main.username }}</td>
-	</tr>
-	<tr>
-		<td><strong>Email</strong></td>
-		<td>{{ main.useremail }}</td>
-	</tr>
-</table>
-<form ng-submit="Submit();">
-    <div class="file-field input-field">
-      <div class="btn">
-        <span>File</span>
-        <input type="file" file-model="file.upload" name="myfile">
-      </div>
-      <div class="file-path-wrapper">
-        <input class="file-path validate" type="text">
-      </div>
+<div style="background-color: #383735;width: 190px;height: 87.5vh;">
+	<div ng-show="uploading" class="progress" style="width:100px;">
+	    <div class="indeterminate"></div>
+	</div>
+	<img src="/api/profiles/{{profile}}" class="pro responsive-img" style="width: 190px;height: 190px;">
+	<div ng-show="uploading" class="progress" style="width:100px;margin-top: -10px;">
+	      <div class="indeterminate"></div>
+	 </div>
+	 <br>
+	<button class="mod btn" style="margin-left: 10%;margin-top: -40%;display: none;background-color: black;opacity: 0.5">Edit Photo</button>
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4 style="font-weight: bold;">Change Profile Picture</h4>
+      	<div style="margin-top: 5%;">
+			<div ng-show="uploading" class="progress" style="width:100px;">
+			    <div class="indeterminate"></div>
+			</div>
+			<img ng-src="http://localhost:8080/api/profiles/{{profile}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
+			<div ng-show="uploading" class="progress" style="width:100px;margin-top: -10px;">
+			      <div class="indeterminate"></div>
+			</div>
+		</div>
+        <form ng-submit="Submit();">
+		    <div class="file-field input-field">
+		      <div class="btn">
+		        <span>File</span>
+		        <input type="file" file-model="file.upload" name="myfile" onchange="angular.element(this).scope().profileChanged(this.files)">
+		      </div>
+		      <div class="file-path-wrapper">
+		        <input class="file-path validate" type="text">
+		      </div>
+		    </div>
+		    <button class="btn">Upload</button>
+		</form>
     </div>
-    <button class="btn">Upload</button>
-</form>
-<br>
-<img ng-src="{{thumbnail.dataUrl || 'http://cdn1-www.craveonline.com/assets/uploads/2014/08/Facebook-Profile-Pic.png'}}">
-<div ng-show="message">
-	<div ng-class="alert">{{message}}</div>
-</div>
+  </div>
 
-</div>
+ </div>
+
+
