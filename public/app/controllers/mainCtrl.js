@@ -3,7 +3,6 @@ angular.module('mainController',['authServices','uploadFileService'])
 .controller('imageCtrl',function($rootScope,$scope,uploadFile,$http,$timeout){
 	$scope.file={};
 	$scope.uploading=false;
-	console.log($scope.uploading);
 	$scope.Submit=function(){
 		$scope.uploading=true;
 		console.log($scope.uploading);
@@ -27,6 +26,22 @@ angular.module('mainController',['authServices','uploadFileService'])
 			}
 		});
 	};
+
+	// $scope.profileChanged=function(files){
+	// 	if(files.length>0 && files[0].name.match(/\.(png|jpg|jpeg)$/)){
+	// 		var fileReader=new FileReader();
+	// 		fileReader.readAsDataURL(files[0]);
+	// 		fileReader.onload=function(e){
+	// 			$timeout(function() {
+	// 				$scope.thumbnail={};
+	// 				$scope.thumbnail.dataUrl=e.target.result;
+	// 			},10);
+	// 		};
+	// 	}
+	// 	else{
+	// 		$scope.thumbnail={};
+	// 	}
+	// };
 })
 
 .controller('mainCtrl',function($http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){

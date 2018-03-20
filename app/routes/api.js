@@ -192,17 +192,17 @@ module.exports=function(router){
 		blog.title=req.body.title;
 		blog.body=req.body.body;
 		var slug=req.body.title.toLowerCase();
-		console.log(slug)
 		slug=slug.replace(/\s+/g,'-');
-		console.log(slug)
-		blog.slug=slug;
-		blog.save(function(err){
+		slug=slug.replace(/[^a-z-]/g,'');
+
+		crypto.randomBytes(16,function(err,buf){
 			if(err){
-				res.json({success:false,message:"Network error please try again later"});
+				console.log(err);
+				return reject(err);
 			}
-			else{
-				res.json({success:true,message:'Blog successfully created'});
-			}
+			buf="-"+buf.toString('hex');
+			slug=slug+buf;
+			res.json({success:true});
 		});
 	});
 
