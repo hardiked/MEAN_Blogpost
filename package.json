@@ -12,8 +12,10 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
+    "elasticsearch": "^14.2.1",
     "express": "^4.16.2",
     "gridfs-stream": "^1.1.1",
+    "instantsearch.js": "^2.6.0",
     "jsonwebtoken": "^8.1.0",
     "method-override": "^2.3.10",
     "mongoose": "^5.0.0-rc2",

@@ -10,11 +10,29 @@ var Grid=require('gridfs-stream');
 var crypto=require('crypto');
 var path=require('path');
 var mongoose=require('mongoose');
+var elasticsearch = require('elasticsearch');
 
 // var upload=multer().single('avatar');
 
 
 module.exports=function(router){
+	// Setup and configuration for elasticsearch
+	var es = new elasticsearch.Client({
+	  host: 'localhost:9200',
+	  log: 'trace'
+	});	
+
+	es.ping({
+	  requestTimeout: 30000,
+	}, function (error) {
+	  if (error) {
+	    console.error('elasticsearch cluster is down!');
+	  } else {
+	    console.log('All is well');
+	  }
+	});
+
+	// Setup and configuration for mongodb
 	var gfs;
 	var conn = mongoose.createConnection('mongodb://localhost:27017/mean_application');
 	conn.once('open', function () {
@@ -31,24 +49,9 @@ module.exports=function(router){
 	});
 	  // all set!
 	})
-	var filename;
-	// var storage=multer.diskStorage({
-	// 	destination:function(req,file,cb){
-	// 		cb(null,'./uploads');
-	// 	},
-	// 	filename:function(req,file,cb){
-	// 		if(!file.originalname.match(/\.(jpeg|jpg|png)$/)){
-	// 			var err=new Error();
-	// 			err.code='filetype';
-	// 			return cb(err);
-	// 		}
-	// 		else{
-	// 			fileName=Date.now()+'_'+file.originalname;
-	// 			cb(null,fileName);
-	// 		}
-	// 	}
-	// });
 
+	// Setup and configuration for GridFS
+	var filename;
 	var storage = new GridFsStorage({
 	  url: 'mongodb://localhost:27017/mean_application',
 	  file: (req, file) => {
@@ -68,28 +71,58 @@ module.exports=function(router){
 	  }
 	});
 
-
-
-	// var upload=multer({
-	// 	storage:storage,
-	// 	limits: {fileSize:10000000}
-
-	// }).single('myfile');
-
 	var upload=multer({storage});
 	router.post('/upload',upload.single('myfile'),function(req,res){
-		console.log(filename);
-		res.json({"success":true,"filename":filename});
+		if(filename==undefined || filename=="" || filename=="null"){
+			res.json({success:false,message:"File field is empty"});
+		}
+		else{
+			var ext=filename.split('.');
+			var length=ext.length-1;
+			ext=ext[length];
+			if(ext=="jpg" || ext=="jpeg" || ext=="png"){
+				res.json({"success":true,"filename":filename,message:"Profile picture successfully updated"});
+			}
+			else{
+				res.json({success:false,message:"Invalide file format"})
+			}
+		}
 	});
 
+	//Route for searching
+	router.post('/search',function(req,res){
+
+		console.log(req.body.query);
+		// client.search({
+		// 	index:'user',
+		// 	type:'user',
+		// 	body:{
+		// 		query:{
+		// 			regexp:{"username":"h.+"}
+		// 		},
+		// 	}
+		// },function(error,response,status){
+		// 	if(error){
+		// 		console.log("search error: "+error);
+		// 	}
+		// 	else{
+		// 		console.log("---Reponse---");
+		// 		console.log(response);
+		// 		console.log("---hits---");
+		// 		response.hits.hits.forEach(function(hit){
+		// 			console.log(hit);
+		// 		})
+		// 	}
+		// });
+	});
+
+	// Route for updating profile picture link
 	router.put('/updateprofile',function(req,res){
 		User.findOne({username:req.body.username},function(err,user){
 			if(err){
 				throw err;
 			}
-			console.log("Jere"+req.body.profile);
 			user.profile=req.body.profile;
-			console.log("here"+user.profile);
 			user.save(function(err){
 				if(err){
 					console.log(err);
@@ -101,6 +134,7 @@ module.exports=function(router){
 		});
 	});
 
+	// Routes for getting all link to all profile pictures
 	router.get('/profiles',function(req,res){
 		gfs.files.find().toArray(function(err,files){
 			if(!files || files.length===0){
@@ -112,6 +146,7 @@ module.exports=function(router){
 		})
 	});
 
+	// Route for getting profile picture by link to that image
 	router.get('/profiles/:profilename',function(req,res){
 		// console.log(req.params.filename)
 		gfs.files.findOne({filename:req.params.profilename},function(err,file){
@@ -132,6 +167,7 @@ module.exports=function(router){
 		});
 	});
 
+	// Route to get profile of particular user
 	router.post('/getprofile',function(req,res){
 		if(req.body.username==null || req.body.username==''){
 			res.json({success:false,message:""});
@@ -152,32 +188,7 @@ module.exports=function(router){
 		}
 	});
 
-	// router.post('/upload',function(req,res){
-	// 	upload(req,res,function(err){
-	// 		if(err){
-	// 			if(err.code==='LIMIT_FILE_SIZE'){
-	// 				res.json({success:false,message:'File size is too large max. size is 10MB'});
-	// 			}
-	// 			else if(err.code==='filetype'){
-	// 				res.json({success:false,message:'File type is invalid'});
-	// 			}
-	// 			else{
-	// 				console.log(err);
-	// 				res.json({success:false,message:'file not uploaded'});
-	// 			}
-	// 		}
-	// 		else{
-	// 			if(!req.file){
-	// 				res.json({success:false,message:'No file was selected'});
-	// 			}
-	// 			else{
-	// 				console.log(fileName);
-	// 				res.json({success:true,message:'File uploaded'});
-	// 			}
-	// 		}
-	// 	});
-	// });
-
+	// Setup and configuration for nodejs
 	var options={
 		auth:{
 			api_user:'hardik97122',
@@ -187,6 +198,7 @@ module.exports=function(router){
 
 	var client=nodemailer.createTransport(sgtransport(options));
 
+	// Route for storing blog
 	router.post('/blog',function(req,res){
 		var blog=new Blog();
 		blog.title=req.body.title;
@@ -206,6 +218,7 @@ module.exports=function(router){
 		});
 	});
 
+	// Route for creating users
  	router.post('/users',function(req,res){
 		var user=new User();
 		user.username=req.body.username;
@@ -249,7 +262,17 @@ module.exports=function(router){
 						text:'localhost:8080/activate/'+user.temporarytoken,
 						html:'Hello <strong> '+user.username +'<strong>,<br><br> Thank you for registering with us.Please the link below to complete your registration.<br><br><a href="http://localhost:8080/activate/'+user.temporarytoken+'">http://localhost:8080/activate/'+user.temporarytoken+'</a>'
 					};
-
+					es.index({
+						index:'user',
+						type:'user',
+						body:{
+							'username':user.username,
+							'email':user.email,
+							'profile':user.profile
+						}
+					},function(err,resp,status){
+						console.log(resp);
+					});
 					client.sendMail(email,function(err,info){
 						if(err){
 							console.log(err);
@@ -265,6 +288,7 @@ module.exports=function(router){
 		}
 	});
 
+ 	// Route for checking username exists or not
 	router.post('/checkusername',function(req,res){
 		if(req.body.username==null || req.body.username==''){
 			res.json({success:false,message:""});
@@ -284,6 +308,7 @@ module.exports=function(router){
 		}
 	});
 
+	// Route for checking email exists or not
 	router.post('/checkemail',function(req,res){
 		if(req.body.email==null || req.body.email==''){
 			res.json({success:false,message:""});
@@ -303,6 +328,7 @@ module.exports=function(router){
 		}
 	});
 
+	// Route for authenticating user
 	router.post('/authenticate',function(req,res){
 		User.findOne({username:req.body.username}).select('email username password active profile').exec(function(err,user){
 			if(err){
@@ -329,7 +355,6 @@ module.exports=function(router){
 							email:user.email
 						},secret,{expiresIn:'24h'});
 						var profile=user.profile;
-						console.log(profile)
 						res.json({success:true,profile:profile,message:"User authenticated",token:token});
 					}
 				}
@@ -337,7 +362,7 @@ module.exports=function(router){
 		});
 	});
 
-
+	// Route for resending the verification link to user
 	router.post('/resend',function(req,res){
 		User.findOne({username:req.body.username}).select('username password active').exec(function(err,user){
 			if(err){
@@ -367,6 +392,7 @@ module.exports=function(router){
 		});
 	});
 
+	// Route for updating the token if verification link is resend
 	router.put('/resend',function(req,res){
 		User.findOne({username:req.body.username},function(err,user){
 			if(err){
@@ -403,6 +429,7 @@ module.exports=function(router){
 		});
 	});
 
+	// Route for verifying account
 	router.put('/activate/:token',function(req,res){
 		User.findOne({temporarytoken:req.params.token}).select('username email temporarytoken active').exec(function(err,user){
 			if(err){
@@ -455,6 +482,7 @@ module.exports=function(router){
 		}
 	});
 
+	// Route for decoding the token
 	router.post('/me',function(req,res){
 		res.send(req.decoded);
 	});

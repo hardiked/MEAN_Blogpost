@@ -12,11 +12,14 @@
   <div id="modal1" class="modal">
     <div class="modal-content">
       <h4 style="font-weight: bold;">Change Profile Picture</h4>
+      	<div ng-class="class" ng-show="profileMessage">{{profileMessage}}</div>
       	<div style="margin-top: 5%;">
 			<div ng-show="uploading" class="progress" style="width:100px;">
 			    <div class="indeterminate"></div>
 			</div>
 			<img ng-src="http://localhost:8080/api/profiles/{{profile}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
+			<i ng-show="arrow" class="large material-icons">arrow_forward</i>
+			<img ng-show="arrow" ng-src="{{thumbnail.dataUrl}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
 			<div ng-show="uploading" class="progress" style="width:100px;margin-top: -10px;">
 			      <div class="indeterminate"></div>
 			</div>
@@ -31,7 +34,7 @@
 		        <input class="file-path validate" type="text">
 		      </div>
 		    </div>
-		    <button class="btn">Upload</button>
+		    <button class="btn" ng-disabled="!selected">Upload</button>
 		</form>
     </div>
   </div>
@@ -39,6 +42,8 @@
   	<h4 style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{username}}</h4>
   </div>
 
+
  </div>
+</div>
 
 

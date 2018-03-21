@@ -3,45 +3,62 @@ angular.module('mainController',['authServices','uploadFileService'])
 .controller('imageCtrl',function($rootScope,$scope,uploadFile,$http,$timeout){
 	$scope.file={};
 	$scope.uploading=false;
+	$scope.selected=false;
+	$scope.arrow=false;
 	$scope.Submit=function(){
 		$scope.uploading=true;
-		console.log($scope.uploading);
 		uploadFile.upload($scope.file).then(function(data){
-			// console.log(data);
 			if(data.data.success){
-				$scope.alert='alert alert-success';
-				$scope.message=data.data.message;
+				// $scope.class="green-text";
+				// $scope.profileMessage=data.data.message;
 				$rootScope.profile=data.data.filename;
 				$http.put('/api/updateprofile',{"username":$rootScope.username,"profile":$rootScope.profile}).then(function(data){
 					$rootScope.profile=data.data.profile;
 					$scope.uploading=false;
+					$scope.arrow=false;
 				});
 				$scope.file={};
+				$scope.selected=false;
+				var $toastContent = $('<span>Profile picture successfully updated</span>');
+  				Materialize.toast($toastContent, 4000);
 			}
 			else{
-				$scope.alert='alert alert-danger';
-				$scope.message=data.data.message;
+				$scope.selected=false;
+				// $scope.class="red-text";
+				// $scope.profileMessage=data.data.message;
 				$scope.file={};
 				$scope.uploading=false;
+				var $toastContent = $('<span>Invalid file format</span>');
+  				Materialize.toast($toastContent, 4000);
 			}
 		});
 	};
 
-	// $scope.profileChanged=function(files){
-	// 	if(files.length>0 && files[0].name.match(/\.(png|jpg|jpeg)$/)){
-	// 		var fileReader=new FileReader();
-	// 		fileReader.readAsDataURL(files[0]);
-	// 		fileReader.onload=function(e){
-	// 			$timeout(function() {
-	// 				$scope.thumbnail={};
-	// 				$scope.thumbnail.dataUrl=e.target.result;
-	// 			},10);
-	// 		};
-	// 	}
-	// 	else{
-	// 		$scope.thumbnail={};
-	// 	}
-	// };
+	$scope.profileChanged=function(files){
+		if(files.length>0 && files[0].name.match(/\.(png|jpg|jpeg)$/)){
+			$scope.selected=true;
+			$scope.arrow=true;
+			$scope.profileMessage="";
+			var fileReader=new FileReader();
+			fileReader.readAsDataURL(files[0]);
+			fileReader.onload=function(e){
+				$timeout(function() {
+					$scope.thumbnail={};
+					$scope.thumbnail.dataUrl=e.target.result;
+				},10);
+			};
+		}
+		else{
+			$scope.thumbnail={};
+			var $toastContent = $('<span>Invalid file format</span>');
+  			Materialize.toast($toastContent, 4000,'rounded');
+			// $scope.class="red-text";
+			// $scope.profileMessage="This file format is not allowed";
+		}
+	};
+
+	
+
 })
 
 .controller('mainCtrl',function($http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
@@ -49,6 +66,10 @@ angular.module('mainController',['authServices','uploadFileService'])
 	var app=this;
 	$scope.textOnLogInButton="Login";
 	app.loadme=false;
+
+	$scope.search=function($event){
+		console.log($scope.searchkey);
+	};
 
 	app.checkSession=function(){
 		if(Auth.isLoggedIn()){
