@@ -2,6 +2,20 @@ main 					{
 	padding-top:30px;	
 }
 
+.fade-out {
+  position: relative;
+  max-height: 350px; // change the height
+}
+.fade-out:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: linear-gradient(to right, rgba(255,255,255,0),rgba(0,0,0,1) );
+}
+
 .success{
 	color: green;
 }

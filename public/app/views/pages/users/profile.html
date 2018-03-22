@@ -39,10 +39,8 @@
     </div>
   </div>
   <div>
-  	<h4 style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{username}}</h4>
+  	<h4 class="fade-out tooltipped" data-position="bottom" data-delay:"50" data-tooltip="{{username}}" style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{username | limitTo:4}}{{username.length>4?'...':''}}</h4>
   </div>
-
-
  </div>
 </div>
 

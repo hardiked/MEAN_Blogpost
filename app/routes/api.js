@@ -93,27 +93,30 @@ module.exports=function(router){
 	router.post('/search',function(req,res){
 
 		console.log(req.body.query);
-		// client.search({
-		// 	index:'user',
-		// 	type:'user',
-		// 	body:{
-		// 		query:{
-		// 			regexp:{"username":"h.+"}
-		// 		},
-		// 	}
-		// },function(error,response,status){
-		// 	if(error){
-		// 		console.log("search error: "+error);
-		// 	}
-		// 	else{
-		// 		console.log("---Reponse---");
-		// 		console.log(response);
-		// 		console.log("---hits---");
-		// 		response.hits.hits.forEach(function(hit){
-		// 			console.log(hit);
-		// 		})
-		// 	}
-		// });
+		es.search({
+			index:'user',
+			type:'user',
+			body:{
+				query:{
+					regexp:{"username":req.body.query+".+"}
+				},
+			}
+		},function(error,response,status){
+			var hits=new Array();
+			if(error){
+				res.json({success:false,message:"Server down Please try later."})
+			}
+			else{
+				console.log("---Reponse---");
+				console.log(response);
+				console.log("---hits---");
+				response.hits.hits.forEach(function(hit){
+					console.log(hit);
+					hits.push(hit);
+				})
+				res.json({success:true,hits:hits});
+			}
+		});
 	});
 
 	// Route for updating profile picture link
@@ -128,6 +131,27 @@ module.exports=function(router){
 					console.log(err);
 				}
 				else{
+					var id=user._id.toString();
+					es.delete({
+					  index: 'user',
+					  type: 'user',
+					  id: id
+					}, function (error, response) {
+					  console.log("deleted"+ response+ error);
+					  es.index({
+						index:'user',
+						type:'user',
+						id:id,
+						body:{
+							'username':user.username,
+							'email':user.email,
+							'profile':user.profile
+						}
+					},function(err,resp,status){
+						console.log("created"+err+resp);
+						});
+					});
+					
 					res.json({success:true,message:"Profile picture updated successfully",profile:user.profile});
 				}
 			});
@@ -262,17 +286,7 @@ module.exports=function(router){
 						text:'localhost:8080/activate/'+user.temporarytoken,
 						html:'Hello <strong> '+user.username +'<strong>,<br><br> Thank you for registering with us.Please the link below to complete your registration.<br><br><a href="http://localhost:8080/activate/'+user.temporarytoken+'">http://localhost:8080/activate/'+user.temporarytoken+'</a>'
 					};
-					es.index({
-						index:'user',
-						type:'user',
-						body:{
-							'username':user.username,
-							'email':user.email,
-							'profile':user.profile
-						}
-					},function(err,resp,status){
-						console.log(resp);
-					});
+					
 					client.sendMail(email,function(err,info){
 						if(err){
 							console.log(err);
@@ -457,6 +471,19 @@ module.exports=function(router){
 						else{
 							console.log('yup!');
 						}
+					});
+					var id=user._id.toString();
+					es.index({
+						index:'user',
+						type:'user',
+						id:id,
+						body:{
+							'username':user.username,
+							'email':user.email,
+							'profile':user.profile
+						}
+					},function(err,resp,status){
+						console.log("here it is "+ resp +err);
 					});
 					res.json({success:true,message:'Account has been verified!',token:token});
 				}

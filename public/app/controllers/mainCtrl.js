@@ -52,8 +52,6 @@ angular.module('mainController',['authServices','uploadFileService'])
 			$scope.thumbnail={};
 			var $toastContent = $('<span>Invalid file format</span>');
   			Materialize.toast($toastContent, 4000,'rounded');
-			// $scope.class="red-text";
-			// $scope.profileMessage="This file format is not allowed";
 		}
 	};
 
@@ -67,8 +65,21 @@ angular.module('mainController',['authServices','uploadFileService'])
 	$scope.textOnLogInButton="Login";
 	app.loadme=false;
 
+	$scope.rub=function($event){
+		$scope.searchkey="";
+		$rootScope.hits="";
+	}
+
 	$scope.search=function($event){
-		console.log($scope.searchkey);
+		if($scope.searchkey!=undefined && $scope.searchkey!=null){
+			console.log($scope.searchkey);
+			$http.post('/api/search',{"query":$scope.searchkey}).then(function(data){
+				$rootScope.hits=data.data.hits;
+			});
+		}
+		else{
+			$rootScope.hits="";
+		}
 	};
 
 	app.checkSession=function(){
@@ -99,6 +110,7 @@ angular.module('mainController',['authServices','uploadFileService'])
 	app.checkSession();
 
 	$rootScope.$on('$routeChangeStart',function(){
+		$rootScope.hits="";
 		if(!app.checkingSession){
 			app.checkSession();
 		}
