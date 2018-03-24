@@ -25,7 +25,7 @@ var app=angular.module('appRoutes',['ngRoute'])
 		autheticated:true
 	})
 
-	.when('/profile',{
+	.when('/profile/:username',{
 		templateUrl:'app/views/pages/users/profile.html',
 		autheticated:true,
 		controller:'imageCtrl',
@@ -34,7 +34,10 @@ var app=angular.module('appRoutes',['ngRoute'])
 	})
 
 	.when('/create',{
-		templateUrl:'app/views/blog/create.html'
+		templateUrl:'app/views/blog/create.html',
+		autheticated: true,
+		controller:'createCtrl',
+		controllerAs:'create'
 	})
 
 	.when('/activate/:token',{
@@ -62,6 +65,7 @@ var app=angular.module('appRoutes',['ngRoute'])
 
 app.run(['$rootScope','Auth','$location',function($rootScope,Auth,$location){
 	$rootScope.$on('$routeChangeStart',function(event,next,current){
+		console.log(next.$$route.autheticated)
 		if(next.$$route.autheticated==true){
 			if(!Auth.isLoggedIn()){
 				baseurl=next.$$route.originalPath;
@@ -72,7 +76,7 @@ app.run(['$rootScope','Auth','$location',function($rootScope,Auth,$location){
 		else if(next.$$route.autheticated==false){
 			if(Auth.isLoggedIn()){
 				event.preventDefault();
-				$location.path('/profile');
+				$location.path('/');
 			}
 		}
 	});

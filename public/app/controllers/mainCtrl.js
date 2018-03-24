@@ -1,10 +1,72 @@
-angular.module('mainController',['authServices','uploadFileService'])
+angular.module('mainController',['ngSanitize','authServices','uploadFileService','ui.pagedown'])
 
-.controller('imageCtrl',function($rootScope,$scope,uploadFile,$http,$timeout){
+
+.controller("createCtrl", function($scope,$window,$q,$http) {
+  $scope.var1 = $window.var1;
+  $scope.data = {
+    content: "",
+    placeholder: "Write your story here.."
+  };
+
+  $scope.search=function($event){
+		$http.post('/api/render',{body:$scope.data.content}).then(function(data){
+			$scope.blog=data.data.b;
+		});
+	}
+	$scope.createBlog=function(){
+		console.log($scope.data.content);
+		console.log($scope.title);
+		$http.post('/api/blog',{title:$scope.title,body:$scope.data.content}).then(function(data){
+			if(data.data.success==false){
+				$scope.class="error";
+				$scope.blogMessage=data.data.message;
+			}
+			else{
+				console.log(data);
+				$scope.class="success";
+				$scope.blogMessage=data.data.message;
+				$scope.blog=data.data.b;
+			}
+		});
+	}
+  
+  $scope.promptImageUrl=function promptImageUrl(){
+  	console.log("fe");
+  }
+
+  $scope.showSomeHelp = function showSomeHelp() {
+    // this is what the default will do
+    $window.open("http://daringfireball.net/projects/markdown/syntax", "_blank");
+  };
+  
+  $scope.insertImage = function insertImage(image) {
+    var deferred = $q.defer();
+    
+    // or you can return a string straightaway
+    deferred.resolve(image);
+    
+    return deferred.promise;
+  };
+  
+})
+
+.controller('imageCtrl',function( $routeParams,$rootScope,$scope,uploadFile,$http,$timeout){
 	$scope.file={};
 	$scope.uploading=false;
 	$scope.selected=false;
 	$scope.arrow=false;
+
+
+
+	$http.post('/api/profile/'+$routeParams.username).then(function(data){
+		console.log(data);
+		$scope.name=data.data.username;
+		$scope.mail=data.data.email;
+		$scope.pic=data.data.profile
+	});
+
+
+
 	$scope.Submit=function(){
 		$scope.uploading=true;
 		uploadFile.upload($scope.file).then(function(data){
@@ -12,8 +74,10 @@ angular.module('mainController',['authServices','uploadFileService'])
 				// $scope.class="green-text";
 				// $scope.profileMessage=data.data.message;
 				$rootScope.profile=data.data.filename;
+				$scope.pic=data.data.filename;
 				$http.put('/api/updateprofile',{"username":$rootScope.username,"profile":$rootScope.profile}).then(function(data){
 					$rootScope.profile=data.data.profile;
+					$scope.pic=data.data.profile;
 					$scope.uploading=false;
 					$scope.arrow=false;
 				});

@@ -11,6 +11,7 @@ var crypto=require('crypto');
 var path=require('path');
 var mongoose=require('mongoose');
 var elasticsearch = require('elasticsearch');
+var marked=require('marked');
 
 // var upload=multer().single('avatar');
 
@@ -212,34 +213,72 @@ module.exports=function(router){
 		}
 	});
 
-	// Setup and configuration for nodejs
+	// Setup and configuration for nodemailer
 	var options={
 		auth:{
-			api_user:'hardik97122',
-			api_key:'h97122@MODI'
+			api_user:'',
+			api_key:''
 		}
 	}
 
 	var client=nodemailer.createTransport(sgtransport(options));
 
+	router.post('/profile/:username',function(req,res){
+		User.findOne({username:req.params.username}).select('username profile email').exec(function(err,user){
+				if(err){
+					throw err;
+				}
+				if(user){
+					res.json({success:true,username:user.username,email:user.email,profile:user.profile});
+				}
+				else{
+					res.json({success:false,message:"No such user exist!"});
+				}
+			});	
+	});
+
+	router.post('/render',function(req,res){
+		var b=marked(req.body.body);
+		res.json({b:b});
+	})
+
 	// Route for storing blog
 	router.post('/blog',function(req,res){
-		var blog=new Blog();
-		blog.title=req.body.title;
-		blog.body=req.body.body;
-		var slug=req.body.title.toLowerCase();
-		slug=slug.replace(/\s+/g,'-');
-		slug=slug.replace(/[^a-z-]/g,'');
+		if(req.body.title==undefined || req.body.title==null || req.body.title==""){
+			res.json({success:false,message:"Title field should not be empty"});
+		}
+		else if(req.body.body==undefined || req.body.body==null || req.body.body==""){
+			res.json({success:false,message:"Content field should not be empty"});
+		}
+		else{
+			var blog=new Blog();
+			blog.title=req.body.title;
+			blog.body=req.body.body;
+			var slug=req.body.title.toLowerCase();
+			slug=slug.replace(/\s+/g,'-');
+			slug=slug.replace(/[^a-z-]/g,'');
 
-		crypto.randomBytes(16,function(err,buf){
-			if(err){
-				console.log(err);
-				return reject(err);
-			}
-			buf="-"+buf.toString('hex');
-			slug=slug+buf;
-			res.json({success:true});
-		});
+			crypto.randomBytes(16,function(err,buf){
+				if(err){
+					console.log(err);
+					return reject(err);
+				}
+				buf="-"+buf.toString('hex');
+				slug=slug+buf;
+				blog.slug=slug;
+				blog.save(function(err){
+					if(err){
+						console.log(err);
+						res.json({success:false,message:'Could not create at this time, try after sometime'})
+					}
+					else{
+						var b=marked(req.body.body);
+						console.log(b);
+						res.json({success:true,message:'Blog created successfully',b:b});
+					}
+				});
+			});
+		}
 	});
 
 	// Route for creating users

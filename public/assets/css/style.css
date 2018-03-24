@@ -6,6 +6,13 @@ main 					{
   position: relative;
   max-height: 350px; // change the height
 }
+
+#preview-content img{
+	width: 50%;
+	height: 50%;
+	margin-left: 25%;
+}
+
 .fade-out:after {
   content: '';
   position: absolute;
@@ -28,6 +35,10 @@ main 					{
 	background-color:#337ab7;
 }
 
+#wmd-input-undefined{
+	width: 75%;
+	margin-left: 12%;
+}
 
 /* HEADER 
 ===================== */

@@ -2,22 +2,21 @@
 	<div ng-show="uploading" class="progress" style="width:190px;">
 	    <div class="indeterminate"></div>
 	</div>
-	<img src="/api/profiles/{{profile}}" class="pro responsive-img" style="width: 190px;height: 190px;">
+	<img src="/api/profiles/{{pic}}" class="pro responsive-img" style="width: 190px;height: 190px;">
 	<div ng-show="uploading" class="progress" style="width:190px;margin-top: -10px;">
 	      <div class="indeterminate"></div>
 	 </div>
 	 <br>
-	<button class="mod btn" style="margin-left: 10%;margin-top: -40%;display: none;background-color: black;opacity: 0.5">Edit Photo</button>
+	<button ng-show="username==name" class="mod btn" style="margin-left: 10%;margin-top: -40%;background-color: black;opacity: 0.5">Edit Photo</button>
   <!-- Modal Structure -->
   <div id="modal1" class="modal">
     <div class="modal-content">
       <h4 style="font-weight: bold;">Change Profile Picture</h4>
-      	<div ng-class="class" ng-show="profileMessage">{{profileMessage}}</div>
       	<div style="margin-top: 5%;">
 			<div ng-show="uploading" class="progress" style="width:100px;">
 			    <div class="indeterminate"></div>
 			</div>
-			<img ng-src="http://localhost:8080/api/profiles/{{profile}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
+			<img ng-src="http://localhost:8080/api/profiles/{{pic}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
 			<i ng-show="arrow" class="large material-icons">arrow_forward</i>
 			<img ng-show="arrow" ng-src="{{thumbnail.dataUrl}}" class="responsive-img" style="width: 100px;height: 100px;margin-top: -15px;">
 			<div ng-show="uploading" class="progress" style="width:100px;margin-top: -10px;">
@@ -39,7 +38,7 @@
     </div>
   </div>
   <div>
-  	<h4 class="fade-out tooltipped" data-position="bottom" data-delay:"50" data-tooltip="{{username}}" style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{username | limitTo:4}}{{username.length>4?'...':''}}</h4>
+  	<h4 class="fade-out tooltipped" data-position="bottom" data-delay:"50" data-tooltip="hardik" style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{name | limitTo:4}}{{name.length>4?'...':''}}</h4>
   </div>
  </div>
 </div>

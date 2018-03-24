@@ -3,18 +3,30 @@
 </div>
 
 <h4>
-	{{ main.username }}
+<img class="responsive-img circle" style="width: 5%; border-radius: 50%;" ng-src="http://localhost:8080/api/profiles/{{profile}}">
+	{{ username }}
 </h4>
+<div ng-class="class" style="margin-left: 12%;width: 75%;">
+	{{blogMessage}}
+</div>
 
 
-<form ng-submit="main.createBlog(blogData);">
-	<div class="form-control">
-	  <input type="text" name="title" class="form-control" placeholder="Title" style="font-size: 250%;font-family: 'sans serif'">
+<form ng-submit="createBlog();">
+	<div class="form-control" style="width: 75%;margin-left: 12%;">
+	  <input type="text" name="title" class="form-control" placeholder="Title" style="font-size: 250%;font-family: 'sans serif'" ng-model="title" ng-keyup="search($event)">
 	</div>
-	<div class="form-control">
+	<!-- <div class="form-control">
 	  <label for="blog">Content</label>
 	  <textarea name="blog" id="textarea1" class="materialize-textarea" rows="5"></textarea>
-	</div>
-	<button class="btn btn-primary">Publish</button>
+	</div> -->
+      <pagedown-editor content="data.content" placeholder="{{data.placeholder}}" help="showSomeHelp()" show-preview="false" insert-image="promptImageUrl()" ng-keyup="search($event)"></pagedown-editor>
+      <div>
+      	<h1 id="preview-header" style="text-align: center; font-weight: bold;font-family: 'sans serif">{{title}}</h1>
+      	<p id="preview-content" ng-bind-html="blog" style="width: 75%;margin-left: 12%;font-family: 'times new roman'"></p>
+      </div>
+	<button style="margin-left: 12%;" class="waves-effect waves-light btn">Publish</button>
 
 </form>
+ 
+
+
