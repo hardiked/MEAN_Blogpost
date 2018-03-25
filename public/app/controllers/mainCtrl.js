@@ -2,6 +2,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 
 
 .controller("createCtrl", function($scope,$window,$q,$http,$rootScope) {
+  $scope.empty=true;
   $scope.var1 = $window.var1;
   $scope.data = {
     content: "",
@@ -9,6 +10,12 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
   };
 
   $scope.search=function($event){
+  	    if($scope.data.content!="" && $scope.title!=""){
+  	    	$scope.empty=false;
+  	    }
+  	    else{
+  	    	$scope.empty=true;
+  	    }
 		$http.post('/api/render',{body:$scope.data.content}).then(function(data){
 			$scope.blog=data.data.b;
 		});
