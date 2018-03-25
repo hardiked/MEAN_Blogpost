@@ -240,7 +240,11 @@ module.exports=function(router){
 	router.post('/render',function(req,res){
 		var b=marked(req.body.body);
 		res.json({b:b});
-	})
+	});
+
+	// router.get('/blog',function(req,res){
+	// 	Blog.
+	// });
 
 	// Route for storing blog
 	router.post('/blog',function(req,res){
@@ -266,6 +270,7 @@ module.exports=function(router){
 				buf="-"+buf.toString('hex');
 				slug=slug+buf;
 				blog.slug=slug;
+				blog.date=new Date();
 				blog.save(function(err){
 					if(err){
 						console.log(err);
