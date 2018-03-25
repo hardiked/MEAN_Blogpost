@@ -48,6 +48,7 @@
     <!-- Directive files -->
     <script src="app/directives/imageUpload.js"></script>
     <script src="app/directives/search-result.js"></script>
+    <script src="app/directives/loader.js"></script>
     
     <!--Services file-->
     <script src="app/services/userServices.js"></script>
@@ -128,7 +129,9 @@
   </head>
 
   <body ng-app="userApp" ng-controller="mainCtrl as main" ng-show="main.loadme" ng-cloak style="background-color: #efefee; font-family: Verdana;">
-
+<div class="progress" style="width: 50%;margin-left: 25%;" ng-show="searching">
+      <div class="indeterminate"></div>
+</div>
     <nav style="background-color: #00b98d;height: 85px;">
     <div class="nav-wrapper">
       <a href="#" class="brand-logo" style="font-size: 300%;font-weight: bold;margin-left: 2%;margin-top: 10px;">Sugarlabs</a>
@@ -165,6 +168,7 @@
     </div>
   </nav>
 
+    
 
     <div ng-view></div>
 

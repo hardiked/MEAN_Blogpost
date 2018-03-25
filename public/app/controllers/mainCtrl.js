@@ -124,7 +124,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 })
 
 .controller('mainCtrl',function($http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
-
+	$rootScope.searching=false;
 	var app=this;
 	$scope.textOnLogInButton="Login";
 	app.loadme=false;
@@ -135,14 +135,19 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	}
 
 	$scope.search=function($event){
+		$rootScope.searching=true;
 		if($scope.searchkey!=undefined && $scope.searchkey!=null){
 			console.log($scope.searchkey);
 			$http.post('/api/search',{"query":$scope.searchkey}).then(function(data){
-				$rootScope.hits=data.data.hits;
+				if(data.data.hits.length!=0){
+					$rootScope.hits=data.data.hits;
+				}
+				$rootScope.searching=false;
 			});
 		}
 		else{
 			$rootScope.hits="";
+			$rootScope.searching=false;
 		}
 	};
 

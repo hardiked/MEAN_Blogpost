@@ -1,4 +1,4 @@
-<div style="background-color: #383735;width: 190px;height: 87.5vh;">
+<div style="background-color: #383735;width: 190px;height: 87.5vh;position: fixed;">
 	<div ng-show="uploading" class="progress" style="width:190px;">
 	    <div class="indeterminate"></div>
 	</div>
@@ -8,6 +8,7 @@
 	 </div>
 	 <br>
 	<button ng-show="username==name" class="mod btn" style="margin-left: 10%;margin-top: -40%;background-color: black;opacity: 0.5">Edit Photo</button>
+  
   <!-- Modal Structure -->
   <div id="modal1" class="modal">
     <div class="modal-content">
@@ -37,10 +38,11 @@
 		</form>
     </div>
   </div>
+
   <div>
   	<h4 class="fade-out tooltipped" data-position="bottom" data-delay:"50" data-tooltip="hardik" style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{name | limitTo:4}}{{name.length>4?'...':''}}</h4>
   </div>
  </div>
-</div>
+
 
 
