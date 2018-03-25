@@ -1,7 +1,7 @@
 angular.module('mainController',['ngSanitize','authServices','uploadFileService','ui.pagedown'])
 
 
-.controller("createCtrl", function($scope,$window,$q,$http) {
+.controller("createCtrl", function($scope,$window,$q,$http,$rootScope) {
   $scope.var1 = $window.var1;
   $scope.data = {
     content: "",
@@ -14,9 +14,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 		});
 	}
 	$scope.createBlog=function(){
-		console.log($scope.data.content);
-		console.log($scope.title);
-		$http.post('/api/blog',{title:$scope.title,body:$scope.data.content}).then(function(data){
+		$http.post('/api/blog',{title:$scope.title,body:$scope.data.content,username:$rootScope.username}).then(function(data){
 			if(data.data.success==false){
 				$scope.class="error";
 				$scope.blogMessage=data.data.message;

@@ -278,11 +278,28 @@ module.exports=function(router){
 					}
 					else{
 						var b=marked(req.body.body);
-						console.log(b);
-						res.json({success:true,message:'Blog created successfully',b:b});
+						User.findOne({username:req.body.username},function(err,user){
+							if(err){
+								throw err;
+							}
+							if(user){
+								user.blogs.push(slug);
+								user.save(function(err){
+									if(err){
+										res.json({success:false,message:"Error in saving blog, Please try after sometime."});
+									}
+									else{
+										res.json({success:true,message:'Blog created successfully',b:b});
+									}
+								});
+							}
+							else{
+								res.json({success:false,message:"Session has expired please try after logging in"});
+							}
+						})
 					}
 				});
-			});
+			});			
 		}
 	});
 

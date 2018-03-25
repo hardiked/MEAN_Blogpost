@@ -30,7 +30,8 @@ var UserSchema=new Schema({
 	email:{type:String,required:true,lowercase:true,unique:true},
 	profile:{type:String,required:false},
 	active:{type:Boolean,required:true,default:false},
-	temporarytoken:{type:String,required:true}
+	temporarytoken:{type:String,required:true},
+	blogs:{type:Array,required:false}
 });
 
 UserSchema.pre('save',function(next){
