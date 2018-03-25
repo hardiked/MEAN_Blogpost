@@ -14,17 +14,20 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 		});
 	}
 	$scope.createBlog=function(){
+		$rootScope.searching=true;
 		$http.post('/api/blog',{title:$scope.title,body:$scope.data.content,username:$rootScope.username}).then(function(data){
 			if(data.data.success==false){
 				$scope.class="error";
 				$scope.blogMessage=data.data.message;
 			}
 			else{
-				console.log(data);
+				$scope.title="";
+				$scope.data.content="";
 				$scope.class="success";
 				$scope.blogMessage=data.data.message;
 				$scope.blog=data.data.b;
 			}
+			$rootScope.searching=false;
 		});
 	}
   
