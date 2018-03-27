@@ -137,6 +137,14 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	$scope.textOnLogInButton="Login";
 	app.loadme=false;
 
+	$http.get('/api/blog').then(function(data){
+		console.log(data);
+		if(data.data.success){
+			$scope.blogList=data.data.blog;
+			console.log($scope.blogList);
+		}
+	});
+
 	$scope.rub=function($event){
 		$scope.searchkey="";
 		$rootScope.hits="";

@@ -1,3 +1,14 @@
-<div class="page-header">
-	<h1>Hello {{ main.username }} from home route</h1>
+<div class="row" style="margin-left: 25%;" ng-repeat='i in blogList'>
+    <div class="col s12 m6">
+        <div class="card white black-text">
+        	<div class="card-content black-text">
+          		<span class="card-title">
+          			<a href="/{{blogList[blogList.indexOf(i)].slug}}" style="color: #ffab58">
+          				{{blogList[blogList.indexOf(i)].title}}
+          			</a>
+          		</span>
+          		<p class="black-text" style="font-family: sans serif;" ng-bind-html="blogList[blogList.indexOf(i)].displayText | limitTo:150"></p>
+        	</div>
+      	</div>
+    </div>
 </div>

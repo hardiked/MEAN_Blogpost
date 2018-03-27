@@ -21,7 +21,7 @@
 	</div> -->
       <pagedown-editor content="data.content" placeholder="{{data.placeholder}}" help="showSomeHelp()" show-preview="false" insert-image="promptImageUrl()" ng-keyup="search($event)"></pagedown-editor>
       <div>
-      	<h1 id="preview-header" style="text-align: center; font-weight: bold;font-family: 'sans serif">{{title}}</h1>
+      	<h2 id="preview-header" style="text-align: center; font-weight: bold;font-family: 'sans serif">{{title}}</h2>
       	<p id="preview-content" ng-bind-html="blog" style="width: 75%;margin-left: 12%;font-family: 'times new roman'"></p>
       </div>
 	<button style="margin-left: 12%;margin-bottom: 5%;" class="waves-effect waves-light btn" ng-disabled="empty">Publish</button>

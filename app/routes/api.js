@@ -242,9 +242,16 @@ module.exports=function(router){
 		res.json({b:b});
 	});
 
-	// router.get('/blog',function(req,res){
-	// 	Blog.
-	// });
+	router.get('/blog',function(req,res){
+		Blog.find().sort({"date":-1}).exec(function(err,blog){
+			if(err){
+				res.json({success:false,message:"Error connecting database!"})
+			}
+			else{
+				res.json({success:true,blog:blog});
+			}
+		});
+	});
 
 	// Route for storing blog
 	router.post('/blog',function(req,res){
@@ -254,6 +261,9 @@ module.exports=function(router){
 		else if(req.body.body==undefined || req.body.body==null || req.body.body==""){
 			res.json({success:false,message:"Content field should not be empty"});
 		}
+		else if(req.body.username==undefined || req.body.username==null || req.body.username==""){
+			res.json({success:false,message:"You can not create blog anonymously"});
+		}
 		else{
 			var blog=new Blog();
 			blog.title=req.body.title;
@@ -261,7 +271,6 @@ module.exports=function(router){
 			var slug=req.body.title.toLowerCase();
 			slug=slug.replace(/\s+/g,'-');
 			slug=slug.replace(/[^a-z-]/g,'');
-
 			crypto.randomBytes(16,function(err,buf){
 				if(err){
 					console.log(err);
@@ -270,6 +279,14 @@ module.exports=function(router){
 				buf="-"+buf.toString('hex');
 				slug=slug+buf;
 				blog.slug=slug;
+				blog.username=req.body.username;
+				var markedContent=marked(req.body.body);
+				console.log(markedContent);
+				markedContent=markedContent.replace("img","img class='responsive-img'");
+				console.log(markedContent);
+				var displayText=markedContent.replace(/<img[^>]*>/g,"");
+				blog.displayText=displayText;
+				blog.markedContent=markedContent;
 				blog.date=new Date();
 				blog.save(function(err){
 					if(err){
