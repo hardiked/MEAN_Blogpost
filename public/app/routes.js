@@ -8,6 +8,13 @@ var app=angular.module('appRoutes',['ngRoute'])
 		templateUrl:'app/views/pages/home.html'
 	})
 
+	.when('/detail/:slug',{
+		templateUrl:'app/views/blog/detail.html',
+		autheticated:false,
+		controllerAs:'detailCtrl',
+		controllerAs:'detail'
+	})
+
 	.when('/register',{
 		templateUrl:'app/views/pages/users/register.html',
 		controller:'regCtrl',

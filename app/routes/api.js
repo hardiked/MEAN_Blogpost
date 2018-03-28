@@ -239,6 +239,7 @@ module.exports=function(router){
 
 	router.post('/render',function(req,res){
 		var b=marked(req.body.body);
+		
 		res.json({b:b});
 	});
 
@@ -281,9 +282,14 @@ module.exports=function(router){
 				blog.slug=slug;
 				blog.username=req.body.username;
 				var markedContent=marked(req.body.body);
-				console.log(markedContent);
+				urls = [];
+			    rex = /<img[^>]+src="(https:\/\/[^">]+)"+ +alt="([a-zA-Z0-9\/!@#$%^&*()_\-+='\":;\/.,<>]+)"+>/g;
+			    var m;
+				while ( m = rex.exec( markedContent ) ) {
+				    urls.push( m[1] );
+				}
+				blog.displayImage=urls[0];
 				markedContent=markedContent.replace("img","img class='responsive-img'");
-				console.log(markedContent);
 				var displayText=markedContent.replace(/<img[^>]*>/g,"");
 				blog.displayText=displayText;
 				blog.markedContent=markedContent;

@@ -1,15 +1,15 @@
-<div class="page-header" style="margin-left: 1%;">
-	<h1>Create Story</h1>
+<div class="page-header" style="margin-left: 1%;display: inline;">
+	<h1 style="display: inline;">Create Story</h1>
 </div>
 
+
 <h4 style="margin-left: 1%;">
-<img style="height: 40px;width: 40px;" class="circle" src="/api/profiles/{{profile}}">	
+<img style="height: 40px;width: 40px;" class="circle" src="/api/profiles/{{profile}}">  
 {{ username }}
 </h4>
 <div ng-class="class" style="margin-left: 12%;width: 75%;">
-	{{blogMessage}}
+  {{blogMessage}}
 </div>
-
 
 <form ng-submit="createBlog();">
 	<div class="form-control" style="width: 75%;margin-left: 12%;">
@@ -22,11 +22,8 @@
       <pagedown-editor content="data.content" placeholder="{{data.placeholder}}" help="showSomeHelp()" show-preview="false" insert-image="promptImageUrl()" ng-keyup="search($event)"></pagedown-editor>
       <div>
       	<h2 id="preview-header" style="text-align: center; font-weight: bold;font-family: 'sans serif">{{title}}</h2>
-      	<p id="preview-content" ng-bind-html="blog" style="width: 75%;margin-left: 12%;font-family: 'times new roman'"></p>
+      	<p id="preview-content" ng-bind-html="blog.b" style="width: 75%;margin-left: 12%;font-family: 'times new roman';font-size: 150%;"></p>
       </div>
 	<button style="margin-left: 12%;margin-bottom: 5%;" class="waves-effect waves-light btn" ng-disabled="empty">Publish</button>
 
 </form>
- 
-
-

@@ -17,7 +17,8 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
   	    	$scope.empty=true;
   	    }
 		$http.post('/api/render',{body:$scope.data.content}).then(function(data){
-			$scope.blog=data.data.b;
+			$scope.blog=data.data;
+			console.log(data);
 		});
 	}
 	$scope.createBlog=function(){
