@@ -1,0 +1,6 @@
+<img src="/api/profiles/{{pic}}" alt="" style="height: 55px;width: 55px;margin-top: 10px; margin-left: 12%;display: inline;margin-bottom: -3%;" class="circle">
+<a href="/profile/{{detail.blog.username}}" class="black-text link" style="display: inline;">{{detail.blog.username}}</a><br>
+<p style="display: inline;margin-left: 16.5%;">{{detail.blog.date}}</p>
+<h1 style="text-align: center;font-family: 'sans-sarif'">{{detail.blog.title}}</h1>
+<hr style="width: 75%;">
+<p id="preview-content" ng-bind-html="detail.blog.markedContent" style="width: 75%;margin-left: 12%;font-family: 'times new roman';font-size: 150%;"></p>

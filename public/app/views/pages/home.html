@@ -16,19 +16,33 @@
 <div class="row" style="margin-left: 25%;" ng-repeat="i in blogList">
     <div class="col s12 m7">
       <div class="card">
-        <div class="card-image" ng-show="{{blogList[blogList.indexOf(i)].displayImage}}">
+        <div class="card-image" ng-show="blogList[blogList.indexOf(i)].displayImage">
           <img src="{{blogList[blogList.indexOf(i)].displayImage}}" height="200px;">
         </div>
         <div class="card white black-text">
         	<div class="card-content black-text">
           		<span class="card-title">
-          			<a href="/{{blogList[blogList.indexOf(i)].slug}}" style="color: #ffab58">
+          			<a href="/detail/{{blogList[blogList.indexOf(i)].slug}}" style="color: #ffab58">
           				{{blogList[blogList.indexOf(i)].title}}
           			</a>
           		</span>
           		<p class="black-text" style="font-family: sans serif;font-size: 150%;" ng-bind-html="blogList[blogList.indexOf(i)].displayText | limitTo:150"></p>
           		<div class="fadeout"></div>
         	</div>
+        	<div class="card-action">By-
+	            <a class="link red-text" href="/profile/{{blogList[blogList.indexOf(i)].username}}" style="display: inline;margin-right: 10%;"><strong>{{blogList[blogList.indexOf(i)].username}}</strong></a>
+	            <p style="display: inline;">On-<strong>{{blogList[0].date.substr(5,5)}}</strong></p>
+	            <div class="bookmark" style="height: 30px;margin-left: 90%;margin-top: -5%;" ng-click="bookmark(blogList[blogList.indexOf(i)].slug)">
+	            <svg style="display: block;height: 30px;width: 30px;" ng-show="false">
+				  <path d="M19.385 4h-9.77A2.623 2.623 0 0 0 7 6.615V23.01a1.022 1.022 0 0 0 1.595.847l5.905-4.004 5.905 4.004A1.022 1.022 0 0 0 22 23.011V6.62A2.625 2.625 0 0 0 19.385 4zM21 23l-5.91-3.955-.148-.107a.751.751 0 0 0-.884 0l-.147.107L8 23V6.615C8 5.725 8.725 5 9.615 5h9.77C20.275 5 21 5.725 21 6.615V23z" fill-rule="evenodd" style="fill:blue;stroke:green"></path>
+				  Sorry, your browser does not support inline SVG.  
+			    </svg>
+				<svg style="display: block;height: 30px;background-color: green;width: 30px;" ng-show="true">
+				  <path d="M19.385 4h-9.77A2.623 2.623 0 0 0 7 6.615V23.01a1.022 1.022 0 0 0 1.595.847l5.905-4.004 5.905 4.004A1.022 1.022 0 0 0 22 23.011V6.62A2.625 2.625 0 0 0 19.385 4zM21 23l-5.91-3.955-.148-.107a.751.751 0 0 0-.884 0l-.147.107L8 23V6.615C8 5.725 8.725 5 9.615 5h9.77C20.275 5 21 5.725 21 6.615V23z" fill-rule="evenodd"></path>
+				  Sorry, your browser does not support inline SVG.  
+			    </svg>
+			    </div>
+	        </div>	
       	</div>
       </div>
     </div>

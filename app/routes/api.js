@@ -1,5 +1,6 @@
 var User=require('../models/user');
 var Blog=require('../models/blog');
+var Bookmark=require('../models/bookmark');
 var jwt=require('jsonwebtoken');
 var secret='swaminarayan';
 var nodemailer=require('nodemailer');
@@ -239,8 +240,87 @@ module.exports=function(router){
 
 	router.post('/render',function(req,res){
 		var b=marked(req.body.body);
-		
+		b=b.replace('strong','strong style="font-weight: bold;"')
+		console.log(b);
 		res.json({b:b});
+	});
+
+	router.get('/blogdetail/:slug',function(req,res){
+		console.log("ehe");
+		Blog.findOne({slug:req.params.slug}).select('slug username title markedContent date').exec(function(err,blog){
+			if(err){
+				console.log(err);
+				throw err;
+			}
+			if(blog){
+				console.log(blog);
+				res.json({success:true,blog:blog});
+			}
+			else{
+				res.json({success:false,message:"No such blog exist"});
+			}
+		});
+	});
+
+	// route to bookmark some article
+	router.post('/bookmark/:username/:slug',function(req,res){
+		console.log(req.params.username);
+		console.log(req.params.slug);
+		if(req.params.username==null || req.params.username=="" || req.params.username==undefined){
+			res.json({success:false,message:"Provide username"});
+		}
+		else if(req.params.slug==null || req.params.slug=="" || req.params.slug==undefined){
+			res.json({success:false,message:"Provide slug"});
+		}
+		else{
+			Bookmark.findOne({username:req.params.username,slug:req.params.slug}).select('slug username bookmarked').exec(function(err,bookmark){
+				if(err){
+					console.log(err);
+					throw err;
+				}
+				else if(bookmark){
+					if(bookmark.bookmarked){
+						bookmark.bookmarked=false;
+						bookmark.save(function(err){
+							if(err){
+								console.log(err);
+								throw err;
+							}
+							else{
+								res.json({success:true,message:"Bookmark removed"});
+							}
+						});
+					}
+					else if(!bookmark.bookmarked){
+						bookmark.bookmarked=true;
+						bookmark.save(function(err){
+							if(err){
+								console.log(err);
+								throw err;
+							}
+							else{
+								res.json({success:true,message:"Bookmark added"});
+							}
+						});
+					}
+				}
+				else{
+					var bookmarked=new Bookmark();
+					bookmarked.username=req.params.username;
+					bookmarked.slug=req.params.slug;
+					bookmarked.bookmarked=true;
+					bookmarked.save(function(err){
+						if(err){
+							console.log(err);
+							throw err;
+						}
+						else{
+							res.json({success:true,message:"Bookmark added"});
+						}
+					});
+				}
+			});
+		}	
 	});
 
 	router.get('/blog',function(req,res){
@@ -289,9 +369,11 @@ module.exports=function(router){
 				    urls.push( m[1] );
 				}
 				blog.displayImage=urls[0];
-				markedContent=markedContent.replace("img","img class='responsive-img'");
+				markedContent=markedContent.replace("img","img class='responsive-img' style='margin-top:30px;margin-bottom:30px;'");
 				var displayText=markedContent.replace(/<img[^>]*>/g,"");
+				displayText=displayText.replace('strong','strong style="font-weight: bold;"')
 				blog.displayText=displayText;
+				markedContent=markedContent.replace('strong','strong style="font-weight: bold;"');
 				blog.markedContent=markedContent;
 				blog.date=new Date();
 				blog.save(function(err){

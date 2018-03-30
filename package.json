@@ -10,6 +10,7 @@
   "author": "Hardik Modi",
   "license": "ISC",
   "dependencies": {
+    "angular-modal-service": "^0.13.0",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",
     "bower": "^1.8.2",

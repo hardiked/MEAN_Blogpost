@@ -10,8 +10,7 @@ var app=angular.module('appRoutes',['ngRoute'])
 
 	.when('/detail/:slug',{
 		templateUrl:'app/views/blog/detail.html',
-		autheticated:false,
-		controllerAs:'detailCtrl',
+		controller:'detailCtrl',
 		controllerAs:'detail'
 	})
 
@@ -72,7 +71,7 @@ var app=angular.module('appRoutes',['ngRoute'])
 
 app.run(['$rootScope','Auth','$location',function($rootScope,Auth,$location){
 	$rootScope.$on('$routeChangeStart',function(event,next,current){
-		console.log(next.$$route.autheticated)
+		// console.log(next.$$route.autheticated)
 		if(next.$$route.autheticated==true){
 			if(!Auth.isLoggedIn()){
 				baseurl=next.$$route.originalPath;

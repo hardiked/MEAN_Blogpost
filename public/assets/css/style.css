@@ -34,6 +34,13 @@
   max-height: 350px; // change the height
 }
 
+.bookmark:hover{
+	cursor: pointer;
+}
+
+.link:hover{
+	text-decoration:underline;
+}
 
 
 #preview-content img{
