@@ -67,13 +67,113 @@
     <script src="app/pagedown/Markdown.Editor.js"></script>
     <script src="app/angular-pagedown/angular-pagedown.js"></script>
     <link rel="stylesheet" type="text/css" href="app/angular-pagedown/angular-pagedown.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
     
     
 
     <script>
+      // function bookburst(){
+      //   console.log("gr");
+      //   var burst=new mojs.Burst({
+      //     radius:{0:20},
+      //     count:10,
+      //     children:{
+      //       shape:'circle',
+      //       radius:5,
+      //       opacity:{1:0},
+      //       fill:['green','yellow','pink'],
+      //       duration:3000
+      //     }
+      //   }).play();
+      // }
+
+
+
       // location.reload(true);
       // $("img").addClass("responsive-img");
     $(document).ready(function(){
+      var myTimeline = new mojs.Timeline();
+      var scaleCurve = mojs.easing.path('M0,100 L25,99.9999983 C26.2328835,75.0708847 19.7847843,0 100,0');
+      var burst=new mojs.Burst({
+          radius:{0:30},
+          speed:2.5,
+          count:10,
+          children:{
+            shape:'circle',
+            radius:5,
+            opacity:{1:0},
+            fill:['green','yellow','pink'],
+            duration:1000
+          }
+        });
+
+      var myAnimation1 = new mojs.Burst({
+    duration: 15000,
+    shape : 'circle',
+    fill : [ '#e67e22', '#DE8AA0', '#8AAEDE', '#8ADEAD', '#DEC58A', '#8AD1DE' ],
+    top: 0,
+    left: 0,
+    opacity: 0.8,
+    childOptions: { radius: {20:0} },
+    radius: {40:120},
+    angle: {0: 180},
+    count: 8,
+    isSwirl: true,
+    isRunLess: true,
+    easing: mojs.easing.bezier(0.1, 1, 0.3, 1)
+  });
+
+  var myAnimation2 = new mojs.Transit({
+    duration: 750,
+    type: 'circle',
+    radius: {0: 50},
+    fill: 'transparent',
+    top: 0,
+    left: 0,
+    stroke: '#2ecc71',
+    strokeWidth: {15:0},
+    opacity: 0.6,
+    isRunLess: true,
+    easing: mojs.easing.bezier(0, 1, 0.5, 1)
+  });
+
+// myTimeline.add(myAnimation1, myAnimation2);
+      myTimeline.add(burst,myAnimation1,myAnimation2);
+
+
+      $( ".bookmark" ).on( "click", function() {
+        elSpan = this.querySelector('svg');
+        console.log("hy");
+        aniPos = findCenter($(this));
+        burst.tune({ top: aniPos.y, left: aniPos.x });
+        myAnimation1.tune({ top: aniPos.y, left: aniPos.x });
+  // myAnimation2.tune({ top: aniPos.y, left: aniPos.x });
+        myTimeline.replay();
+  // myTimeline.replay();
+        new mojs.Tween({
+          duration : 5000,
+          onUpdate: function(progress) {
+            if(progress > 0.3) {
+              var scaleProgress = scaleCurve(progress);
+              elSpan.style.WebkitTransform = elSpan.style.transform = 'scale3d(' + scaleProgress + ',' + scaleProgress + ',1)';
+              elSpan.style.WebkitTransform = elSpan.style.color = '#2ecc71';
+            } else {
+              elSpan.style.WebkitTransform = elSpan.style.transform = 'scale3d(0,0,1)';
+              elSpan.style.WebkitTransform = elSpan.style.color = 'rgba(0,0,0,0.3)';
+            }
+          }
+        }).play();
+      });
+      function findCenter ($this) {
+      var offset = $this.offset();
+      var width = $this.width();
+      var height = $this.height();
+       Pos = {
+        x: offset.left + (width / 2),
+        y: offset.top + (height / 2)
+      };
+      return Pos;
+    };
        $('.dropdown-trigger').dropdown();
        $(".pro").one("load", function() {
           // do stuff
@@ -86,41 +186,7 @@
           if(this.complete) $(this).load();
         });
  
-      $('.tooltipped').tooltip({delay: 50});
-      //  $( ".pro" )
-      //  .on("mouseenter", function() {
-      //   $(".mod").show();
-      // })
-      // .on("mouseleave", function() {
-      //   $(".mod").hide();
-      // });
-      // $( ".mod" )
-      //  .on("mouseenter", function() {
-      //   $(".mod").show();
-      // })
-      // .on("mouseleave", function() {
-      //   $(".mod").hide();
-      // });
-      // var content=$("#wmd-input-undefined");
-      // function setContent(value){
-      //   // var markedContent=marked(value);
-      //   // $("#preview-content").html(markedContent);
-      //   // console.log("marked"+markedContent);
-      //   $("#preview-content img").each(function(){
-      //     console.log("fd");
-      //     $(this).addClass("responsive-img");
-      //   })
-      // }
-      // setContent(content.val());
-      // content.keyup(function(){
-      //   setContent($(this).val());
-      //   // console.log("original"+$(this).val());
-      // });
-
-
-        
-
-      
+      $('.tooltipped').tooltip({delay: 50});      
 });
 </script>
 <style type="text/css">
@@ -181,6 +247,8 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mo-js/0.288.2/mo.min.js"></script>
+
 
     <script>
       $(".button-collapse").sideNav();

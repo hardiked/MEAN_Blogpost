@@ -45,13 +45,17 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 		$http.post('/api/blog',{title:$scope.title,body:$scope.data.content,username:$rootScope.username}).then(function(data){
 			if(data.data.success==false){
 				$scope.class="error";
-				$scope.blogMessage=data.data.message;
+				// $scope.blogMessage=data.data.message;
+				var $toastContent = $('<span>Some error occured</span>');
+  				Materialize.toast($toastContent, 4000,'rounded');
 			}
 			else{
 				$scope.title="";
 				$scope.data.content="";
 				$scope.class="success";
-				$scope.blogMessage=data.data.message;
+				// $scope.blogMessage=data.data.message;
+				var $toastContent = $('<span>Blog created successfully</span>');
+  				Materialize.toast($toastContent, 4000,'rounded');
 				$scope.blog=data.data.b;
 			}
 			$rootScope.searching=false;
@@ -150,23 +154,14 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 
 })
 
-.controller('mainCtrl',function($sce,$http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
+.controller('mainCtrl',function($q,$sce,$http,$window,$interval,$route,$rootScope,Auth,$scope,$location,$timeout){
 	$rootScope.searching=false;
 	var app=this;
 	$scope.textOnLogInButton="Login";
 	app.loadme=false;
+	$scope.bookmarks={};
 
-	$http.get('/api/blog').then(function(data){
-		if(data.data.success){
-			$scope.blogList=data.data.blog;
-			// $sce.trustAsHtml
-			// var i;
-			// for(i=0;i<$scope.blogList.length;i++){
-			// 	console.log($scope.blogList[i].displayText);
-			// 	$scope.blogList[i].displayText=$sce.trustAsHtml($scope.blogList[i].displayText);
-			// }
-		}
-	});
+	
 
 	$scope.rub=function($event){
 		$scope.searchkey="";
@@ -174,10 +169,25 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	}
 
 	$scope.bookmark=function($slug){
-		console.log($slug);
-		console.log($rootScope.username);
+		// console.log($slug);
+		// console.log($rootScope.username);
 		$http.post('/api/bookmark/'+$rootScope.username+'/'+$slug).then(function(data){
-			console.log(data);
+			if(data.data.success){
+				if(data.data.message=="Bookmark removed"){
+					var $toastContent = $('<span>Bookmark removed</span>');
+	  				Materialize.toast($toastContent, 1000,'rounded');
+	  			}
+	  			else{
+	  				var $toastContent = $('<span>Bookmark added</span>');
+	  				Materialize.toast($toastContent, 1000,'rounded');	
+	  			}
+				$scope.bookmarks[$slug]=!$scope.bookmarks[$slug];
+
+			}
+			else{
+				var $toastContent = $('<span>Login to bookmark</span>');
+	  			Materialize.toast($toastContent, 1000,'rounded');	
+			}
 		});
 	}
 
@@ -204,7 +214,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 				var token=$window.localStorage.getItem('token');
 				if(token==null){
 					$interval.cancel(interval);
-					console.log("no toen");
+					console.log("no token");
 				}
 				else{
 					self.parseJwt=function(token){
@@ -226,6 +236,32 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 
 	app.checkSession();
 
+	$http.get('/api/blog').then(function(data){
+		if(data.data.success){
+			$scope.blogList=data.data.blog;
+			Auth.getUser($q).then(function(data){
+				$rootScope.username=data.data.username;
+				// console.log($rootScope.username);
+				// console.log("hi"+$rootScope.username);
+				$http.get('/api/list/bookmark/'+$rootScope.username).then(function(data){
+					// console.log(data);	
+					// console.log(typeof data.data.bookmarked[0]);	
+					var i=0;
+					for(i=0;i<data.data.bookmarked.length;i++){
+						// console.log(data.data.bookmarked[i]);
+						$scope.bookmarks[data.data.bookmarked[i].slug]=data.data.bookmarked[i].bookmarked;
+					}
+				});
+			});
+			// $sce.trustAsHtml
+			// var i;
+			// for(i=0;i<$scope.blogList.length;i++){
+			// 	console.log($scope.blogList[i].displayText);
+			// 	$scope.blogList[i].displayText=$sce.trustAsHtml($scope.blogList[i].displayText);
+			// }
+		}
+	});
+
 	$rootScope.$on('$routeChangeStart',function(){
 		$rootScope.hits="";
 		if(!app.checkingSession){
@@ -236,6 +272,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 			app.isLoggedIn=true;
 			Auth.getUser().then(function(data){
 				$rootScope.username=data.data.username;
+				// console.log($rootScope.username);
 				var user=data.data.username;
 				// console.log(user);
 				$http.post('/api/getprofile',{"username":user}).then(function(data){

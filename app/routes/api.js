@@ -246,7 +246,6 @@ module.exports=function(router){
 	});
 
 	router.get('/blogdetail/:slug',function(req,res){
-		console.log("ehe");
 		Blog.findOne({slug:req.params.slug}).select('slug username title markedContent date').exec(function(err,blog){
 			if(err){
 				console.log(err);
@@ -262,12 +261,25 @@ module.exports=function(router){
 		});
 	});
 
+	// route to get list of bookmark of given user
+	router.get('/list/bookmark/:username',function(req,res){
+		console.log(req.params.username);
+		if(req.params.username=="" || req.params.username==null || req.params.username==undefined){
+			res.json({success:false,message:"Login to bookmark"});
+		}
+		else{
+			Bookmark.find({username:req.params.username}).select('slug bookmarked').exec(function(err,bookmarked){
+				res.json({bookmarked:bookmarked});
+			});
+		}	
+	})
+
 	// route to bookmark some article
 	router.post('/bookmark/:username/:slug',function(req,res){
-		console.log(req.params.username);
-		console.log(req.params.slug);
+		// console.log(req.params.username);
+		// console.log(req.params.slug);
 		if(req.params.username==null || req.params.username=="" || req.params.username==undefined){
-			res.json({success:false,message:"Provide username"});
+			res.json({success:false,message:"Login to bookmark"});
 		}
 		else if(req.params.slug==null || req.params.slug=="" || req.params.slug==undefined){
 			res.json({success:false,message:"Provide slug"});
