@@ -31,6 +31,7 @@ var UserSchema=new Schema({
 	profile:{type:String,required:false},
 	active:{type:Boolean,required:true,default:false},
 	temporarytoken:{type:String,required:true},
+	bio:{type:String,required:false},
 	blogs:{type:Array,required:false}
 });
 

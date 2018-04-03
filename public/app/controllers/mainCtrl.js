@@ -1,11 +1,20 @@
 'use strict';
 angular.module('mainController',['ngSanitize','authServices','uploadFileService','ui.pagedown'])
 
+.controller('bookmarkCtrl',function($http,$rootScope,$scope){
+	$rootScope.searching=true;
+	$http.post('/api/bookmark',{"username":$rootScope.username}).then(function(data){
+		$scope.blogList=data.data.bookmarkList;
+		$rootScope.searching=false;
+	});
+})
+
 .controller('detailCtrl',function($rootScope,$sce,$scope,$http,$routeParams){
 	$rootScope.searching=true;
 	$http.get('/api/blogdetail/'+$routeParams.slug).then(function(data){
 		$rootScope.searching=false;
 		$scope.detail=data.data;
+		console.log($scope.detail);
 		$scope.detail.blog.date=$scope.detail.blog.date.split('-');
 		var
     		month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
@@ -15,7 +24,6 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 		$scope.detail.blog.markedContent=$sce.trustAsHtml($scope.detail.blog.markedContent);
 		$http.post('/api/profile/'+$scope.detail.blog.username).then(function(data){
 			$scope.pic=data.data.profile
-			console.log($scope.pic);
 		});
 	});
 })
@@ -35,6 +43,7 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
   	    else{
   	    	$scope.empty=true;
   	    }
+  	    console.log($scope.data.content);
 		$http.post('/api/render',{body:$scope.data.content}).then(function(data){
 			$scope.blog=data.data;
 			$scope.blog.b=$sce.trustAsHtml($scope.blog.b)
@@ -88,15 +97,11 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	$scope.selected=false;
 	$scope.arrow=false;
 
-
-
 	$http.post('/api/profile/'+$routeParams.username).then(function(data){
 		$scope.name=data.data.username;
 		$scope.mail=data.data.email;
 		$scope.pic=data.data.profile
 	});
-
-
 
 	$scope.Submit=function(){
 		$scope.uploading=true;
@@ -161,6 +166,35 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	app.loadme=false;
 	$scope.bookmarks={};
 
+	$scope.getbio=function($username){
+		console.log($username);
+		$http.post('/api/getbio',{"username":$username}).then(function(data){
+			$scope.hoverbio=data.data.bio;
+		});
+	}
+
+
+	$scope.updateBio=function(){
+		if($scope.bio!="" && $scope.bio!=undefined && $scope.bio!=null){
+			$http.put('/api/updatebio',{"username":$rootScope.username,"bio":$scope.bio}).then(function(data){
+				if(data.data.success){
+					var $toastContent = $('<span>successfully updated</span>');
+		  			Materialize.toast($toastContent, 1000,'rounded');
+					console.log($scope.bio);
+				}
+				else{
+					if(data.data.message=="fied is not changed"){
+						var $toastContent = $('<span>fied is not changed</span>');
+			  			Materialize.toast($toastContent, 1000,'rounded');
+					}
+					else{
+						var $toastContent = $('<span>field is null or not changed</span>');
+			  			Materialize.toast($toastContent, 1000,'rounded');
+			  		}
+				}
+			});
+		}
+	}
 	
 
 	$scope.rub=function($event){
@@ -244,7 +278,6 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 				// console.log($rootScope.username);
 				// console.log("hi"+$rootScope.username);
 				$http.get('/api/list/bookmark/'+$rootScope.username).then(function(data){
-					// console.log(data);	
 					// console.log(typeof data.data.bookmarked[0]);	
 					var i=0;
 					for(i=0;i<data.data.bookmarked.length;i++){
@@ -253,12 +286,6 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 					}
 				});
 			});
-			// $sce.trustAsHtml
-			// var i;
-			// for(i=0;i<$scope.blogList.length;i++){
-			// 	console.log($scope.blogList[i].displayText);
-			// 	$scope.blogList[i].displayText=$sce.trustAsHtml($scope.blogList[i].displayText);
-			// }
 		}
 	});
 
@@ -277,10 +304,28 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 				// console.log(user);
 				$http.post('/api/getprofile',{"username":user}).then(function(data){
 					$rootScope.profile=data.data.profile;
+					$scope.bio=data.data.bio;
 					// console.log($rootScope.profile);
 				});
 				app.useremail=data.data.email;
 				app.loadme=true;
+			});
+			$http.get('/api/blog').then(function(data){
+				if(data.data.success){
+					$scope.blogList=data.data.blog;
+					Auth.getUser($q).then(function(data){
+						$rootScope.username=data.data.username;
+						// console.log($rootScope.username);
+						// console.log("hi"+$rootScope.username);
+						$http.get('/api/list/bookmark/'+$rootScope.username).then(function(data){
+							var i=0;
+							for(i=0;i<data.data.bookmarked.length;i++){
+								// console.log(data.data.bookmarked[i]);
+								$scope.bookmarks[data.data.bookmarked[i].slug]=data.data.bookmarked[i].bookmarked;
+							}
+						});
+					});
+				}
 			});
 		}
 		else{
@@ -301,6 +346,9 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 		app.disabled=false;
 		Auth.login(app.loginData).then(function(data){
 			if(data.data.success==true){
+				console.log(data);
+				$scope.bio=data.data.bio;
+				console.log($scope.bio);
 				$rootScope.profile=data.data.profile;
 				$scope.textOnLogInButton="Redirecting...";
 				app.successMsg=data.data.message;

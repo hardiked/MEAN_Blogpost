@@ -91,10 +91,27 @@ module.exports=function(router){
 		}
 	});
 
+	router.post('/bookmark',function(req,res){
+		var bookmarkList=[];
+		Bookmark.find({username:req.body.username,bookmarked:true}).select('slug bookmarked').exec(function(err,bookmarked){
+			var i=0;
+			// console.log(bookmarked);
+			for(i in bookmarked){
+				Blog.findOne({slug:bookmarked[i].slug}).select('slug username date displayImage displayText title').exec(function(err,blog){
+					bookmarkList.push(blog);
+					if(i==(bookmarked.length)-1){
+						if(bookmarkList.length==bookmarked.length){
+							res.json({success:true,bookmarkList:bookmarkList});
+						}
+					}
+				});
+			}			
+		});
+	});
+
 	//Route for searching
 	router.post('/search',function(req,res){
 
-		console.log(req.body.query);
 		es.search({
 			index:'user',
 			type:'user',
@@ -199,13 +216,12 @@ module.exports=function(router){
 			res.json({success:false,message:""});
 		}
 		else{
-			User.findOne({username:req.body.username}).select('profile').exec(function(err,user){
+			User.findOne({username:req.body.username}).select('bio profile').exec(function(err,user){
 				if(err){
 					throw err;
 				}
 				if(user){
-					console.log("ji"+user.profile);
-					res.json({success:true,profile:user.profile});
+					res.json({success:true,profile:user.profile,bio:user.bio});
 				}
 				else{
 					res.json({success:false ,message:"Unknown error occured"});
@@ -241,7 +257,6 @@ module.exports=function(router){
 	router.post('/render',function(req,res){
 		var b=marked(req.body.body);
 		b=b.replace('strong','strong style="font-weight: bold;"')
-		console.log(b);
 		res.json({b:b});
 	});
 
@@ -252,7 +267,6 @@ module.exports=function(router){
 				throw err;
 			}
 			if(blog){
-				console.log(blog);
 				res.json({success:true,blog:blog});
 			}
 			else{
@@ -263,7 +277,6 @@ module.exports=function(router){
 
 	// route to get list of bookmark of given user
 	router.get('/list/bookmark/:username',function(req,res){
-		console.log(req.params.username);
 		if(req.params.username=="" || req.params.username==null || req.params.username==undefined){
 			res.json({success:false,message:"Login to bookmark"});
 		}
@@ -420,6 +433,51 @@ module.exports=function(router){
 		}
 	});
 
+	router.post('/getbio',function(req,res){
+		User.findOne({username:req.body.username}).select('bio').exec(function(err,user){
+			if(err){
+				console.log(err);
+				throw err;
+			}
+			else{
+				// console.log(user.bio);
+				res.json({success:true,bio:user.bio});
+			}
+		});
+	})
+
+	router.put('/updatebio',function(req,res){
+		if(req.body.username==undefined || req.body.username==null || req.body.username==""){
+			res.json({success:false,message:"provide username"});
+		}
+		if(req.body.bio==undefined || req.body.bio==null || req.body.bio==""){
+			res.json({success:false,message:"You can not create blog anonymously"});
+		}
+		User.findOne({username:req.body.username},function(err,user){
+			if(err){
+				console.log(err);
+				throw err;
+			}
+			else{
+				if(req.body.bio==user.bio){
+					res.json({success:false,message:"fied is not changed"});
+				}
+				else{
+					user.bio=req.body.bio;
+					user.save(function(err){
+						if(err){
+							console.log(err);
+							throw err;
+						}
+						else{
+							res.json({success:true,message:"Updated successfully"});
+						}
+					});
+				}
+			}
+		});
+	})
+
 	// Route for creating users
  	router.post('/users',function(req,res){
 		var user=new User();
@@ -522,7 +580,7 @@ module.exports=function(router){
 
 	// Route for authenticating user
 	router.post('/authenticate',function(req,res){
-		User.findOne({username:req.body.username}).select('email username password active profile').exec(function(err,user){
+		User.findOne({username:req.body.username}).select('bio email username password active profile').exec(function(err,user){
 			if(err){
 				throw err;
 			}
@@ -547,7 +605,7 @@ module.exports=function(router){
 							email:user.email
 						},secret,{expiresIn:'24h'});
 						var profile=user.profile;
-						res.json({success:true,profile:profile,message:"User authenticated",token:token});
+						res.json({success:true,profile:profile,message:"User authenticated",token:token,bio:user.bio});
 					}
 				}
 			}

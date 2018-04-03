@@ -30,7 +30,13 @@
           		<div class="fadeout"></div>
         	</div>
         	<div class="card-action">By-
-	            <a class="link red-text" href="/profile/{{blogList[blogList.indexOf(i)].username}}" style="display: inline;margin-right: 10%;"><strong>{{blogList[blogList.indexOf(i)].username}}</strong></a>
+	            <a class="link red-text" href="/profile/{{blogList[blogList.indexOf(i)].username}}" style="display: inline;margin-right: 10%;"><strong class="tooltip" ng-mouseover="getbio(blogList[blogList.indexOf(i)].username)">{{blogList[blogList.indexOf(i)].username}}
+					<span class="tooltiptext">
+						<div><strong style="font-weight: bold;">{{blogList[blogList.indexOf(i)].username}}</strong></div>
+						<hr>
+						<div>{{hoverbio}}</div>
+					</span>
+	            </strong></a>
 	            <p style="display: inline;">On-<strong>{{blogList[blogList.indexOf(i)].date.substr(5,5)}}</strong></p>
 	            <div class="bookmark" style="width: 25px; height: 30px;margin-left: 90%; margin-top: -5%;" ng-click="bookmark(blogList[blogList.indexOf(i)].slug)">
 	            <svg style="display: block;height: 30px;width: 30px;" ng-show="bookmarks[blogList[blogList.indexOf(i)].slug]">

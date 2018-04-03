@@ -1,5 +1,9 @@
 <img src="/api/profiles/{{pic}}" alt="" style="height: 55px;width: 55px;margin-top: 10px; margin-left: 12%;display: inline;margin-bottom: -3%;" class="circle">
-<a href="/profile/{{detail.blog.username}}" class="black-text link" style="display: inline;">{{detail.blog.username}}</a><br>
+<a href="/profile/{{detail.blog.username}}" class="black-text link tooltip" style="display: inline;" ng-controller="mainCtrl" ng-mouseover="getbio(detail.blog.username)">{{detail.blog.username}}
+	<span class="tooltiptext">
+		<div>{{hoverbio}}</div>
+	</span>
+</a><br>
 <p style="display: inline;margin-left: 16.5%;">{{detail.blog.date}}</p>
 <h1 style="text-align: center;font-family: 'sans-sarif'">{{detail.blog.title}}</h1>
 <hr style="width: 75%;">

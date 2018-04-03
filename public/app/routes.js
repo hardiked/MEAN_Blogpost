@@ -46,6 +46,14 @@ var app=angular.module('appRoutes',['ngRoute'])
 		controllerAs:'create'
 	})
 
+	.when('/me/bookmarks',{
+		templateUrl:'app/views/blog/bookmarks.html',
+		autheticated: true,
+		controller:'bookmarkCtrl',
+		controllerAs:'bookmark'
+	})
+
+
 	.when('/activate/:token',{
 		templateUrl:'app/views/pages/users/activation/activate.html',
 		controller:'emailCtrl',
@@ -71,7 +79,7 @@ var app=angular.module('appRoutes',['ngRoute'])
 
 app.run(['$rootScope','Auth','$location',function($rootScope,Auth,$location){
 	$rootScope.$on('$routeChangeStart',function(event,next,current){
-		// console.log(next.$$route.autheticated)
+		console.log(next)
 		if(next.$$route.autheticated==true){
 			if(!Auth.isLoggedIn()){
 				baseurl=next.$$route.originalPath;

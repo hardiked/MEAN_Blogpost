@@ -1,13 +1,13 @@
-<div style="background-color: #383735;width: 190px;height: 87.5vh;">
-	<div ng-show="uploading" class="progress" style="width:190px;">
+<div style="background-color: #383735;width: 18%;height: 87.5vh;">
+	<div ng-show="uploading" class="progress" style="width:100%;">
 	    <div class="indeterminate"></div>
 	</div>
-	<img src="/api/profiles/{{pic}}" class="pro responsive-img" style="width: 190px;height: 190px;">
-	<div ng-show="uploading" class="progress" style="width:190px;margin-top: -10px;">
+	<img src="/api/profiles/{{pic}}" class="pro responsive-img" style="width: 100%;height: 35%;">
+	<div ng-show="uploading" class="progress" style="width:100%;margin-top: -10px;">
 	      <div class="indeterminate"></div>
 	 </div>
 	 <br>
-	<button ng-show="username==name" class="btn mod" style="margin-left: 10%;margin-top: -40%;background-color: black;opacity: 0.5">Edit Photo</button>
+	<button ng-show="username==name" class="btn mod" style="margin-left: 25%;margin-top: -40%;background-color: black;opacity: 0.5">Edit</button>
   
   <!-- Modal Structure -->
   <div id="modal1" class="modal">
@@ -35,12 +35,19 @@
 		      </div>
 		    </div>
 		    <button class="btn" ng-disabled="!selected">Upload</button>
+		</form><br>
+		<hr>
+        <h4 style="font-weight: bold;">Write something about you</h4>
+        <form ng-controller="mainCtrl" ng-submit="updateBio();">
+		    <input ng-disabled="main.disabled" type="text" name="bio" class="form-control"  ng-model="bio" style="font-family: 'sans serif';font-size: 150%;">
+		    <button class="waves-effect waves-light btn" style="margin-bottom: 5%;">Update</button>
 		</form>
     </div>
   </div>
 
   <div>
-  	<h4 class="fade-out tooltipped" data-position="bottom" data-delay:"50" data-tooltip="hardik" style="font-weight: bold;margin-top: 0%;margin-left: 5%; color: white;">{{name | limitTo:4}}{{name.length>4?'...':''}}</h4>
+  	<p style="font-weight: bold;margin-top: -5%; color: white;text-align: center;">{{name}}</p>
+  	<p ng-controller="mainCtrl" style="color: white;">{{bio|limitTo:100}}{{bio.length>100 ? "..." : ""}}</p>
   </div>
  </div>
 

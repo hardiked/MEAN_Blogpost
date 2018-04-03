@@ -1,0 +1,31 @@
+<h3 style="margin-left: 25%;">Offline reading list - {{blogList.length}}</h3>
+<div class="row" style="margin-left: 25%;" ng-repeat="i in blogList">
+    <div class="col s12 m7">
+      <div class="card">
+        <div class="card-image" ng-show="blogList[blogList.indexOf(i)].displayImage">
+          <img src="{{blogList[blogList.indexOf(i)].displayImage}}" height="200px;">
+        </div>
+        <div class="card white black-text">
+        	<div class="card-content black-text">
+          		<span class="card-title">
+          			<a href="/detail/{{blogList[blogList.indexOf(i)].slug}}" style="color: #ffab58">
+          				{{blogList[blogList.indexOf(i)].title}}
+          			</a>
+          		</span>
+          		<p class="black-text" style="font-family: sans serif;font-size: 150%;" ng-bind-html="blogList[blogList.indexOf(i)].displayText | limitTo:150"></p>
+          		<div class="fadeout"></div>
+        	</div>
+        	<div class="card-action">By-
+	            <a class="link red-text" href="/profile/{{blogList[blogList.indexOf(i)].username}}" style="display: inline;margin-right: 10%;"><strong class="tooltip" ng-mouseover="getbio(blogList[blogList.indexOf(i)].username)">{{blogList[blogList.indexOf(i)].username}}
+					<span class="tooltiptext">
+						<div><strong style="font-weight: bold;">{{blogList[blogList.indexOf(i)].username}}</strong></div>
+						<hr>
+						<div>{{hoverbio}}</div>
+					</span>
+	            </strong></a>
+	            <p style="display: inline;">On-<strong>{{blogList[blogList.indexOf(i)].date.substr(5,5)}}</strong></p>
+	        </div>	
+      	</div>
+      </div>
+    </div>
+  </div>

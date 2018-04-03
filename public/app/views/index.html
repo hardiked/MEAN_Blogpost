@@ -212,6 +212,7 @@
             <li ng-show="!main.isLoggedIn"><a href="/login">Login</a></li>
             <li ng-show="main.isLoggedIn"><a href="#" ng-click="main.logout()">Logout</a></li>
             <li ng-show="main.isLoggedIn"><a href="/profile/{{username}}"><img style="height: 40px;width: 40px;margin-top: 10px;" class="circle" src="/api/profiles/{{profile}}"></a></li>
+            <li ng-show="main.isLoggedIn"><a href="/me/bookmarks">Bookmarks</a></li>
       </ul>
       <div style="height: 100%;">
         <form>
@@ -232,6 +233,7 @@
             <li ng-show="!main.isLoggedIn"><a href="/login">Login</a></li>
             <li ng-show="main.isLoggedIn"><a href="#" ng-click="main.logout()">Logout</a></li>
             <li ng-show="main.isLoggedIn"><a href="/profile/{{username}}">Hello {{ username }}</a></li>
+            <li ng-show="main.isLoggedIn"><a href="/me/bookmarks">Bookmarks</a></li>
       </ul>
     </div>
   </nav>
