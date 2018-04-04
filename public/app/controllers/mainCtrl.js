@@ -5,17 +5,26 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 	$rootScope.searching=true;
 	$http.post('/api/bookmark',{"username":$rootScope.username}).then(function(data){
 		$scope.blogList=data.data.bookmarkList;
+		//console.log($scope.blogList);
 		$rootScope.searching=false;
 	});
 })
 
 .controller('detailCtrl',function($rootScope,$sce,$scope,$http,$routeParams){
 	$rootScope.searching=true;
-	$http.get('/api/blogdetail/'+$routeParams.slug).then(function(data){
+	console.log($rootScope.username);
+	$http.get('/api/blogdetail/'+$routeParams.slug+'/'+$rootScope.username).then(function(data){
 		$rootScope.searching=false;
 		$scope.detail=data.data;
-		console.log($scope.detail);
 		$scope.detail.blog.date=$scope.detail.blog.date.split('-');
+		$scope.likes=$scope.detail.blog.likes;
+		console.log($scope.detail);
+		if($scope.detail.liked){
+			$scope.likeClass="btn-floating green btn-large"
+		}
+		else{
+			$scope.likeClass="btn-floating white btn-large"
+		}
 		var
     		month = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     		days  = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -26,6 +35,19 @@ angular.module('mainController',['ngSanitize','authServices','uploadFileService'
 			$scope.pic=data.data.profile
 		});
 	});
+
+	$scope.like=function($slug){
+		$http.post('/api/addlike',{"username":$rootScope.username,"slug":$slug}).then(function(data){
+			console.log(data);
+			$scope.likes=data.data.count;
+			if(data.data.message=="Like added"){
+				$scope.likeClass="btn-floating green btn-large";
+			}
+			else{
+				$scope.likeClass="btn-floating white btn-large"
+			}
+		});
+	}
 })
 
 .controller("createCtrl", function($scope,$window,$q,$http,$rootScope,$sce) {

@@ -9,6 +9,7 @@ var BlogSchema=new Schema({
 	markedContent:{type:String,required:true},
 	displayText:{type:String,required:true},
 	displayImage:{type:String,required:false},
+	likes:{type:Number,required:false,default:0},
 	date:{type:Date,required:false}
 });
 

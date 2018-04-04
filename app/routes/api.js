@@ -1,6 +1,7 @@
 var User=require('../models/user');
 var Blog=require('../models/blog');
 var Bookmark=require('../models/bookmark');
+var Like=require('../models/like');
 var jwt=require('jsonwebtoken');
 var secret='swaminarayan';
 var nodemailer=require('nodemailer');
@@ -90,6 +91,117 @@ module.exports=function(router){
 			}
 		}
 	});
+
+	router.post('/addlike',function(req,res){
+	
+		if(req.body.username==null || req.body.username=="" || req.body.username==undefined){
+			res.json({success:false,message:"Login to Like"});
+		}
+		else if(req.body.slug==null || req.body.slug=="" || req.body.slug==undefined){
+			res.json({success:false,message:"Provide slug"});
+		}
+		else{
+			Like.findOne({username:req.body.username,slug:req.body.slug}).select('slug username liked').exec(function(err,like){
+				if(err){
+					console.log(err);
+					throw err;
+				}
+				else if(like){
+					if(like.liked==true){
+						like.liked=false;
+						like.save(function(err){
+							if(err){
+								console.log(err);
+								throw err;
+							}
+							else{
+								Blog.findOne({slug:req.body.slug}).select('likes').exec(function(err,blog){
+									if(err){
+										console.log(err);
+										throw err;
+									}
+									else{
+										blog.likes=blog.likes-1;
+										blog.save(function(err){
+											if(err){
+												console.log(err);
+												throw err;
+											}
+											else{
+												res.json({success:true,message:"Like removed",count:blog.likes});
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+					else if(like.liked==false){
+						like.liked=true;
+						like.save(function(err){
+							if(err){
+								console.log(err);
+								throw err;
+							}
+							else{
+								Blog.findOne({slug:req.body.slug}).select('likes').exec(function(err,blog){
+									if(err){
+										console.log(err);
+										throw err;
+									}
+									else{
+										blog.likes=blog.likes+1;
+										blog.save(function(err){
+											if(err){
+												console.log(err);
+												throw err;
+											}
+											else{
+												res.json({success:true,message:"Like added",count:blog.likes});
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				}
+				else{
+					var liked=new Like();
+					liked.username=req.body.username;
+					liked.slug=req.body.slug;
+					liked.liked=true;
+					liked.save(function(err){
+						if(err){
+							console.log(err);
+							throw err;
+						}
+						else{
+							Blog.findOne({slug:req.body.slug}).select('likes').exec(function(err,blog){
+								if(err){
+									console.log(err);
+									throw err;
+								}
+								else{
+									blog.likes=blog.likes+1;
+									blog.save(function(err){
+										if(err){
+											console.log(err);
+											throw err;
+										}
+										else{
+											res.json({success:true,message:"Like added",count:blog.likes});
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+
+	})
 
 	router.post('/bookmark',function(req,res){
 		var bookmarkList=[];
@@ -260,14 +372,30 @@ module.exports=function(router){
 		res.json({b:b});
 	});
 
-	router.get('/blogdetail/:slug',function(req,res){
-		Blog.findOne({slug:req.params.slug}).select('slug username title markedContent date').exec(function(err,blog){
+	router.get('/blogdetail/:slug/:username',function(req,res){
+		console.log(req.params.username);
+		Blog.findOne({slug:req.params.slug}).select('likes slug username title markedContent date').exec(function(err,blog){
 			if(err){
 				console.log(err);
 				throw err;
 			}
 			if(blog){
-				res.json({success:true,blog:blog});
+				// var count=Like.find({slug:req.params.slug,username:req.params.username,liked:false}).count();
+				// console.log(count);
+				// if(count==0){
+				// 	res.json({success:true,blog:blog,liked:false});
+				// }
+				// else{
+				// 	res.json({success:true,blog:blog,liked:true});
+				// }
+				Like.count({slug:req.params.slug,username:req.params.username,liked:true},function(err,count){
+					if(count==0){
+						res.json({success:true,blog:blog,liked:false});
+					}
+					else{
+						res.json({success:true,blog:blog,liked:true});
+					}
+				});
 			}
 			else{
 				res.json({success:false,message:"No such blog exist"});
